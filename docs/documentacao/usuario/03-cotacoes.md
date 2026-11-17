@@ -1,0 +1,34 @@
+# 3. Cotações de compra
+
+## Etapas
+
+Toda cotação passa por quatro etapas, sempre visíveis no topo da tela:
+
+**Rascunho → Enviada → Aprovada → Recebida**
+
+## Montar uma cotação
+
+Em **Cotações**, toque em **Nova cotação**, dê um título e escolha a unidade. Os itens podem vir de três lugares:
+
+- **Sugestões**: produtos abaixo do mínimo, com a quantidade que cobre o mínimo mais um mês de consumo
+  (arredondada para a embalagem);
+- **Modelo**: listas que se repetem, como "Material de limpeza", salvas uma vez e usadas sempre;
+- **Catálogo**: qualquer produto, buscando pelo nome ou código.
+
+A lista pode ser salva como **modelo** para a próxima vez.
+
+## Enviar, aprovar e receber
+
+1. **Gerar PDF**: abre a cotação pronta para imprimir ou salvar em PDF e mandar a quem vai cotar.
+2. **Enviar para cotação**: a cotação passa para "Enviada".
+3. Ao receber as propostas, anexe a **proposta**, escolha o **fornecedor** e preencha os **preços**. Cada linha
+   mostra o **último preço aprovado** do produto, para comparar.
+4. O **aprovador** toca em **Aprovar**. Fica registrado quem aprovou e quando.
+5. Quando o material chega, **Marcar como recebida** gera automaticamente a **entrada no estoque** da unidade.
+   Anexe também a **nota fiscal** e o **boleto**.
+
+Todo passo aparece no **histórico** da cotação, com nome e data.
+
+## Fornecedores
+
+Em **Fornecedores** ficam o contato, o telefone, as categorias que cada um fornece e as cotações feitas com ele.
