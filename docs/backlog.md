@@ -11,7 +11,7 @@ Legenda: [x] feito · [ ] a fazer. Itens marcados **Proposta** ainda não foram 
 - [x] Testes (Vitest), lint (ESLint), `Makefile` e checagem de simulados no build.
 - [x] Documentação em `docs/` com PDF do manual e da documentação técnica, rotina `/encerrar-dia`.
 - [x] Área do desenvolvedor (`/dev`): visão geral, implementação, backlog, histórico, changelog e documentos.
-- [ ] Primeiro envio ao GitHub (`v2ntechnology/system-estoque-servioeste`).
+- [x] Primeiro envio ao GitHub (`v2ntechnology/system-estoque-servioeste`).
 
 ## Etapa 1 — Telas de demonstração com dados simulados (spec 001)
 

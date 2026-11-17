@@ -20,3 +20,4 @@ Registro diário do que foi adicionado, alterado e removido no projeto. A entrad
 - Menu de demonstração para ver o sistema como cada papel e simular falta de conexão e fim de expediente.
 - Área do desenvolvedor (`/dev`) com implementação, backlog, histórico, changelog e documentos.
 - Manual do sistema e documentação técnica, também em PDF, e a rotina `/encerrar-dia`.
+- Código publicado no repositório do GitHub da equipe (`v2ntechnology/system-estoque-servioeste`).
