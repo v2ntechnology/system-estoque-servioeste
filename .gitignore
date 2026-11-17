@@ -1,0 +1,63 @@
+# ==== Variáveis de ambiente e segredos ====
+.env
+.env.*
+!.env.example
+*.env
+secrets/
+.secrets/
+
+# ==== Certificados e chaves ====
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+
+# ==== Dados reais da Servioeste (planilhas, fotos de contagem, anexos de cotação) ====
+*.xlsx
+*.xlsm
+*.xls
+*.csv
+*.docx
+*.pdf
+# PDFs da documentação (gerados por scripts/gerar_pdf.py) e o minimundo vão para o repositório
+!docs/pdf/*.pdf
+!docs/Minimundo*.pdf
+uploads/
+anexos/
+fotos/
+*.sql
+*.dump
+backups/
+
+# ==== Node / Vite ====
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+npm-debug.log*
+pnpm-debug.log*
+
+# ==== Python ====
+__pycache__/
+*.py[cod]
+.venv*/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+
+# ==== Editor / SO ====
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+
+# ==== Claude Code local ====
+.claude/settings.local.json
+CLAUDE.md
