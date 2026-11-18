@@ -37,6 +37,8 @@ Legenda: [x] feito · [ ] a fazer. Itens marcados **Proposta** ainda não foram 
 - [x] Entrada verde e saída vermelha; nenhuma barra de rolagem.
 - [ ] Levar as demais telas (Movimentações, Fornecedores, Relatórios, Importação, Unidades) ao estilo de lista.
 - [ ] Lista de aplicativos vinda do Hub, só com os liberados para a pessoa.
+- [x] Gráficos do histórico nos indicadores dos Relatórios (spec 003).
+- [ ] Gráficos nos indicadores do Painel (histórico de abaixo do mínimo e divergências por contagem).
 
 ## Etapa 2 — Back-end (Proposta)
 

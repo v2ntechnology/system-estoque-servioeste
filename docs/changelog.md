@@ -13,6 +13,8 @@ Registro diário do que foi adicionado, alterado e removido no projeto. A entrad
 - **Cotações** e **Contagens** com o resumo da escolhida aberto ao lado da lista, com link próprio.
 - Indicadores de contagem: unidades em dia, em andamento, divergências e acurácia do estoque.
 - Botões − e + na contagem, com atalho de embalagem.
+- **Gráficos** nos indicadores dos Relatórios (spec 003): Entradas, Saídas e Gasto abrem o histórico por dia ou por
+  mês, em área, colunas ou tabela, com a divisão por categoria.
 
 ### Alterado
 
