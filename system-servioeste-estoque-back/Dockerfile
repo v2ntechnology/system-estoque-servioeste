@@ -13,7 +13,8 @@ COPY alembic.ini ./
 COPY alembic ./alembic
 COPY tests ./tests
 
-RUN useradd --system --uid 10001 app
+RUN useradd --system --uid 10001 app \
+    && mkdir -p /dados/arquivos && chown app /dados/arquivos  # fotos e anexos (spec 005), num volume
 USER app
 
 EXPOSE 8000

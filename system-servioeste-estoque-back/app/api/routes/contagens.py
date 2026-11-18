@@ -8,7 +8,7 @@ from sqlalchemy import select
 
 from app.api.deps import DB, Eu, EuAtual, exigir, unidades_visiveis, uuid_ou_404
 from app.core.tempo import agora, hoje
-from app.models import Contagem, Divergencia, ItemContagem, Movimentacao, Produto, Saldo
+from app.models import Arquivo, Contagem, Divergencia, ItemContagem, Movimentacao, Produto, Saldo
 from app.regras import ItemContado, Mov, calcular_divergencias
 from app.services import auditoria
 from app.services.estoque import itens_e_divergencias, view_contagem
@@ -95,6 +95,10 @@ async def registrar_itens(id: str, corpo: LoteDeItens, eu: EuAtual, db: DB) -> d
         if "observacao" in enviados:
             item.observacao = alt.observacao or ""
         if "foto" in enviados:
+            if alt.foto is not None:
+                foto = await db.get(Arquivo, uuid_ou_404(alt.foto, "Foto não encontrada."))
+                if foto is None or foto.unidade_id != c.unidade_id:
+                    raise HTTPException(422, "Foto não encontrada. Tire a foto de novo.")
             item.foto = alt.foto
     await db.commit()
     return await _completa(db, c)

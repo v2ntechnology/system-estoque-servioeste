@@ -23,6 +23,20 @@ class Auditoria(Base):
     criado_em: Mapped[datetime] = criado_em()
 
 
+class Arquivo(Base):
+    """Foto da contagem ou anexo de cotação guardado em `ARQUIVOS_DIR` com nome sorteado (spec 005)."""
+
+    __tablename__ = "arquivos"
+    id: Mapped[uuid.UUID] = pk()
+    nome: Mapped[str] = mapped_column(sa.String(255))  # nome original, só para mostrar
+    tipo: Mapped[str] = mapped_column(sa.String(60))  # tipo conferido pelo conteúdo (image/jpeg, application/pdf…)
+    tamanho: Mapped[int] = mapped_column(sa.Integer)
+    caminho: Mapped[str] = mapped_column(sa.String(255))  # relativo a ARQUIVOS_DIR
+    unidade_id: Mapped[uuid.UUID] = mapped_column(sa.ForeignKey("unidades.id"), index=True)
+    autor: Mapped[str] = mapped_column(sa.String(160))
+    criado_em: Mapped[datetime] = criado_em()
+
+
 class Importacao(Base):
     """Prévia de uma planilha enviada; só vira dados ao confirmar."""
 

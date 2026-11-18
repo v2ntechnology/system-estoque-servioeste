@@ -9,7 +9,7 @@ COMPOSE = docker compose -f infra/docker-compose.yml --env-file .env
 DB_LOCAL := sqlite+aiosqlite:///./estoque-dev.db
 
 .DEFAULT_GOAL := help
-.PHONY: help install install-back front front-mock build-front check-no-mocks up down logs seed api-local seed-local \
+.PHONY: help install install-back front front-mock front-rede front-mock-rede build-front check-no-mocks up down logs seed api-local seed-local \
         test test-front test-back lint lint-front lint-back docs
 
 help: ## lista os comandos
@@ -27,6 +27,12 @@ front-mock: ## front-end com dados simulados (MSW) em http://localhost:5177
 
 front: ## front-end ligado à API (8004) em http://localhost:5177
 	cd $(FRONT) && pnpm dev
+
+front-rede: ## como `front`, mas aceita acesso pela rede (celular no mesmo Wi-Fi); só para testar
+	cd $(FRONT) && pnpm dev --host 0.0.0.0
+
+front-mock-rede: ## como `front-mock`, mas aceita acesso pela rede (celular no mesmo Wi-Fi); só para testar
+	cd $(FRONT) && pnpm dev:mock --host 0.0.0.0
 
 build-front: ## build de produção do front-end ($(FRONT)/dist)
 	cd $(FRONT) && pnpm build

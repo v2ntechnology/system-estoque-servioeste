@@ -36,8 +36,8 @@ async def view_cotacao(db: AsyncSession, c: Cotacao) -> dict:
     return {
         **view_resumo(c, itens),
         "itens": [{"produto_id": str(i.produto_id), "quantidade": i.quantidade, "preco": i.preco} for i in itens],
-        "anexos": [{"id": str(a.id), "tipo": a.tipo, "nome": a.nome, "enviado_em": iso(a.enviado_em), "autor": a.autor}
-                   for a in anexos],
+        "anexos": [{"id": str(a.id), "tipo": a.tipo, "nome": a.nome, "enviado_em": iso(a.enviado_em), "autor": a.autor,
+                    "url": f"/api/v1/arquivos/{a.arquivo_id}" if a.arquivo_id else None} for a in anexos],
         "eventos": [{"data": iso(e.data), "autor": e.autor, "descricao": e.descricao} for e in eventos],
         "aprovada_por": c.aprovada_por, "aprovada_em": iso(c.aprovada_em), "observacao": c.observacao,
     }

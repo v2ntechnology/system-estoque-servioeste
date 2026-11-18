@@ -87,7 +87,8 @@ export function verProduto({ preco_ref: _, ...p }: ProdutoDb): Produto {
 }
 
 export function verContagem(c: ContagemDb): Contagem {
-  return { ...c, ...progresso(c.itens), divergencias: c.lista_divergencias.length }
+  const itens = c.itens.map((i) => ({ ...i, foto_url: i.foto ? `/api/v1/arquivos/${i.foto}` : null }))
+  return { ...c, itens, ...progresso(c.itens), divergencias: c.lista_divergencias.length }
 }
 
 export function verCotacao(c: CotacaoDb): Cotacao {

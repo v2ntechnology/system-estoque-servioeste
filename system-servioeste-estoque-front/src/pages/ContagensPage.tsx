@@ -1,4 +1,4 @@
-import { AlertTriangle, CalendarClock, Camera, Check, ChevronRight, ClipboardList, MessageSquare, Play, Search, X } from "lucide-react"
+import { AlertTriangle, CalendarClock, Check, ChevronRight, ClipboardList, MessageSquare, Play, Search, X } from "lucide-react"
 import { useState } from "react"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
 
@@ -6,6 +6,7 @@ import { AppShell } from "@/components/layout/AppShell"
 import { Avatar } from "@/components/ui/avatar"
 import { Cabecalho } from "@/components/layout/Cabecalho"
 import { Badge } from "@/components/ui/badge"
+import { MiniaturaFoto } from "@/components/ui/miniatura"
 import { Barra } from "@/components/ui/barra"
 import { Button } from "@/components/ui/button"
 import { Kpi } from "@/components/ui/card"
@@ -315,7 +316,7 @@ function PainelContagem({ id, onFechar }: { id: string; onFechar: () => void }) 
                       <p className="truncate">{nome(i.produto_id)}</p>
                       <p className="flex flex-wrap gap-x-3 text-xs text-muted-foreground">
                         {i.observacao && <span className="inline-flex items-center gap-1"><MessageSquare className="size-3" />{i.observacao}</span>}
-                        {i.foto && <span className="inline-flex items-center gap-1"><Camera className="size-3" />{i.foto}</span>}
+                        {i.foto_url && <MiniaturaFoto url={i.foto_url} nome={nome(i.produto_id)} className="size-10" />}
                       </p>
                     </li>
                   ))}

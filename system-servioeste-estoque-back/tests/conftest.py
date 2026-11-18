@@ -4,6 +4,7 @@ from urllib.parse import quote
 
 import pytest
 from httpx import ASGITransport, AsyncClient
+from sqlalchemy import event
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.pool import StaticPool
 
@@ -15,9 +16,23 @@ from app.models import Categoria, EstoqueMinimo, Pessoa, PessoaUnidade, Produto,
 ORIGIN = "http://localhost:5177"
 
 
+@pytest.fixture(autouse=True)
+def pasta_de_arquivos(tmp_path, monkeypatch):
+    """Fotos e anexos dos testes vão para uma pasta temporária, nunca para a do projeto."""
+    from app.core.config import get_settings
+    monkeypatch.setattr(get_settings(), "arquivos_dir", str(tmp_path / "arquivos"))
+
+
 @pytest.fixture
 async def sessionmaker():
     engine = create_async_engine("sqlite+aiosqlite://", poolclass=StaticPool, connect_args={"check_same_thread": False})
+
+    # O SQLite não confere chaves estrangeiras por padrão; o Postgres confere. Ligamos para os testes pegarem a ordem
+    # errada de gravação (achado na spec 005: anexo gravado antes do arquivo).
+    @event.listens_for(engine.sync_engine, "connect")
+    def _chaves_estrangeiras(conexao, _):
+        conexao.execute("PRAGMA foreign_keys=ON")
+
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield async_sessionmaker(engine, expire_on_commit=False)

@@ -14,6 +14,7 @@ import { Faixa } from "@/components/ui/card"
 import { Confirmar } from "@/components/ui/confirmar"
 import { Carregando, ErroCarga, Vazio } from "@/components/ui/estados"
 import { Input } from "@/components/ui/input"
+import { MiniaturaFoto } from "@/components/ui/miniatura"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Tabs } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
@@ -21,6 +22,7 @@ import { useToast } from "@/components/ui/toast"
 import { QtdMovimento } from "@/components/ui/movimento"
 import { useMapaProdutos } from "@/features/catalogo/api"
 import { enviarItens, useContagem, useFinalizarContagem } from "@/features/contagens/api"
+import { enviarFoto } from "@/features/arquivos/api"
 import { adicionar, aplicarFila, confirmarEnvio, lerFila, minutosAte } from "@/features/contagens/fila"
 import { useCategorias, useNomeUnidade, usePode, useUnidades } from "@/features/sessao/api"
 import { ApiError } from "@/lib/api"
@@ -192,7 +194,8 @@ function ContagemAberta({ contagem }: { contagem: Contagem }) {
                   </h2>
                   <ul className="divide-y divide-border/60">
                     {doGrupo.map((i) => (
-                      <LinhaContagem key={i.produto_id} item={i} produto={mapa.get(i.produto_id)!} desabilitado={!podeContar} onAlterar={alterar} />
+                      <LinhaContagem key={i.produto_id} item={i} produto={mapa.get(i.produto_id)!} unidadeId={contagem.unidade_id}
+                        desabilitado={!podeContar} onAlterar={alterar} />
                     ))}
                   </ul>
                 </section>
@@ -230,9 +233,10 @@ function StatusEnvio({ envio, pendentes }: { envio: Envio; pendentes: number }) 
  * Uma linha da contagem, pensada para o polegar: nome à esquerda, quantidade com − e + à direita, e atalhos de
  * embalagem, observação e foto embaixo. Vazio continua "não contado" (princípio VIII).
  */
-function LinhaContagem({ item, produto, desabilitado, onAlterar }: {
+function LinhaContagem({ item, produto, unidadeId, desabilitado, onAlterar }: {
   item: ItemContagem
   produto: Produto
+  unidadeId: string
   desabilitado: boolean
   onAlterar: (alt: AlteracaoItem) => void
 }) {
@@ -241,6 +245,28 @@ function LinhaContagem({ item, produto, desabilitado, onAlterar }: {
   const [obsAberta, setObsAberta] = useState(!!item.observacao)
   const foto = useRef<HTMLInputElement>(null)
   const contado = item.quantidade !== null
+  const avisar = useToast()
+  const [enviandoFoto, setEnviandoFoto] = useState(false)
+  // Miniatura na hora (antes de a API responder) e depois a guardada no servidor.
+  const [previa, setPrevia] = useState<string | null>(null)
+  const urlFoto = previa ?? item.foto_url ?? null
+
+  async function escolherFoto(f: File | undefined) {
+    if (!f) return
+    setEnviandoFoto(true)
+    try {
+      const guardada = await enviarFoto(f, unidadeId)
+      setPrevia(URL.createObjectURL(f))
+      onAlterar({ produto_id: item.produto_id, foto: guardada.id })
+    } catch (e) {
+      // A foto precisa de conexão; a quantidade continua guardada no aparelho (spec 005, RF-04).
+      avisar(e instanceof ApiError && e.status !== 0 ? e.message
+        : "Sem conexão: a foto não foi enviada. Tente de novo quando o sinal voltar.", "erro")
+    } finally {
+      setEnviandoFoto(false)
+      if (foto.current) foto.current.value = ""
+    }
+  }
 
   function mudar(v: string) {
     setTexto(v)
@@ -291,16 +317,27 @@ function LinhaContagem({ item, produto, desabilitado, onAlterar }: {
           onClick={() => setObsAberta((v) => !v)} disabled={desabilitado && !item.observacao}>
           <MessageSquare className="size-3.5" /> {item.observacao ? "Observação" : "Obs."}
         </button>
-        <button type="button" className={cn(atalho, item.foto && "text-foreground")} onClick={() => foto.current?.click()} disabled={desabilitado}>
-          <Camera className="size-3.5" /> {item.foto ? "Trocar foto" : "Foto"}
+        <button type="button" className={cn(atalho, item.foto && "text-foreground")} onClick={() => foto.current?.click()}
+          disabled={desabilitado || enviandoFoto}>
+          {enviandoFoto ? <Loader2 className="size-3.5 animate-spin" /> : <Camera className="size-3.5" />}
+          {enviandoFoto ? "Enviando…" : item.foto ? "Trocar foto" : "Foto"}
         </button>
-        <input ref={foto} type="file" accept="image/*" capture="environment" hidden
-          onChange={(e) => { const f = e.target.files?.[0]; if (f) onAlterar({ produto_id: item.produto_id, foto: f.name }) }} />
+        <input ref={foto} type="file" accept="image/*" capture="environment" hidden aria-label={`Foto de ${produto.nome}`}
+          onChange={(e) => void escolherFoto(e.target.files?.[0])} />
         {!desabilitado && texto !== "" && (
           <button type="button" className={cn(atalho, "ml-auto")} onClick={() => mudar("")}><X className="size-3.5" /> Limpar</button>
         )}
       </div>
-      {item.foto && <p className="mt-1 truncate pl-9 text-xs text-muted-foreground"><Camera className="mr-1 inline size-3" />{item.foto}</p>}
+      {item.foto && (
+        <div className="mt-2 flex items-center gap-2 pl-9">
+          {urlFoto ? <MiniaturaFoto url={urlFoto} nome={produto.nome} /> : <span className="text-xs text-muted-foreground">Foto guardada</span>}
+          {!desabilitado && (
+            <button type="button" className={atalho} onClick={() => { setPrevia(null); onAlterar({ produto_id: item.produto_id, foto: null }) }}>
+              <X className="size-3.5" /> Tirar foto
+            </button>
+          )}
+        </div>
+      )}
       {obsAberta && (
         <Textarea className="mt-2 ml-9 w-[calc(100%-2.25rem)]" rows={2} defaultValue={item.observacao} disabled={desabilitado} placeholder="Ex.: 2 caixas amassadas"
           aria-label={`Observação de ${produto.nome}`} onBlur={(e) => e.target.value !== item.observacao && onAlterar({ produto_id: item.produto_id, observacao: e.target.value })} />
@@ -372,7 +409,10 @@ function ContagemFinalizada({ contagem }: { contagem: Contagem }) {
                     {i.quantidade === null ? <span className="text-xs text-muted-foreground">Não contado</span> : numero(i.quantidade)}
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
-                    {i.observacao}{i.foto && <span className="ml-1 inline-flex items-center gap-1"><Camera className="size-3" />{i.foto}</span>}
+                    <span className="flex items-center gap-2">
+                      {i.foto_url && <MiniaturaFoto url={i.foto_url} nome={mapa.get(i.produto_id)?.nome ?? ""} className="size-10" />}
+                      {i.observacao}
+                    </span>
                   </TableCell>
                 </TableRow>
               ))}

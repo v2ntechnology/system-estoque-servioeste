@@ -1,6 +1,8 @@
 import "@testing-library/jest-dom/vitest"
 
 import { cleanup } from "@testing-library/react"
+import { File as ArquivoNode, Blob as BlobNode } from "node:buffer"
+
 import { afterEach } from "vitest"
 
 // jsdom não implementa matchMedia (usado pelo tema "sistema").
@@ -40,3 +42,13 @@ globalThis.Request = class extends RequestNode {
     } else super(input, init)
   }
 } as typeof Request
+
+// jsdom não implementa URL.createObjectURL (miniatura da foto antes de a API responder).
+if (!URL.createObjectURL) URL.createObjectURL = () => "blob:teste"
+
+// O jsdom traz FormData, File e Blob próprios, que o fetch do Node não sabe enviar (o pedido sai sem o arquivo).
+// Usamos os do Node: File e Blob de node:buffer; o FormData sai de um corpo urlencoded lido pelo Response do Node.
+{
+  const form = await new Response("a=1", { headers: { "content-type": "application/x-www-form-urlencoded" } }).formData()
+  Object.assign(globalThis, { FormData: form.constructor, File: ArquivoNode, Blob: BlobNode })
+}

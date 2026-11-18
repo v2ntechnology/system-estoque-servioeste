@@ -78,8 +78,10 @@ export interface ItemContagem {
   /** `null` = não contado. Zero só quando digitado (constituição, princípio VIII). */
   quantidade: number | null
   observacao: string
-  /** Nome da foto anexada (nos simulados não há arquivo de verdade). */
+  /** Id do arquivo da foto (spec 005); `null` = sem foto. */
   foto: string | null
+  /** Endereço da foto para mostrar (vem da API; ausente enquanto a alteração está só no aparelho). */
+  foto_url?: string | null
 }
 
 export interface Divergencia {
@@ -154,10 +156,21 @@ export interface ItemCotacao {
   preco: number | null
 }
 
+/** Foto ou anexo guardado no servidor (spec 005). */
+export interface Arquivo {
+  id: string
+  nome: string
+  tipo: string
+  tamanho: number
+  url: string
+}
+
 export interface Anexo {
   id: string
   tipo: TipoAnexo
   nome: string
+  /** Endereço para baixar; `null` em anexos antigos, de antes de os arquivos serem guardados. */
+  url?: string | null
   enviado_em: string
   autor: string
 }

@@ -2,7 +2,7 @@ import { screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { describe, expect, it } from "vitest"
 
-import { db } from "@/mocks/db"
+import { db, mudarDemo } from "@/mocks/db"
 
 import { renderizar, usarServidor } from "./renderizar"
 
@@ -131,5 +131,32 @@ describe("gráfico dos indicadores (spec 003)", () => {
     expect((await within(janela).findAllByText(/6 meses até/)).length).toBeGreaterThan(0)
     await waitFor(() => expect(within(janela).getAllByRole("row").length).toBe(7)) // cabeçalho + 6 meses
     expect(within(janela).queryByText(/Invalid Date/)).not.toBeInTheDocument()
+  })
+})
+
+describe("foto do item da contagem (spec 005)", () => {
+  const foto = () => new File([new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 1, 2, 3])], "prateleira.jpg", { type: "image/jpeg" })
+
+  it("envia a foto, mostra a miniatura e guarda o id no item sem contar a quantidade", async () => {
+    const c = contagemAberta()
+    renderizar(`/contagens/${c.id}`)
+    const u = userEvent.setup()
+    const entrada = await screen.findByLabelText("Foto de Copo descartável 200 mL")
+    await u.upload(entrada, foto())
+    expect(await screen.findByRole("img", { name: "Foto de Copo descartável 200 mL" })).toBeInTheDocument()
+    await waitFor(() => expect(db.contagens.find((x) => x.id === c.id)!.itens.find((i) => i.produto_id === "pr-cop-001")!.foto).toMatch(/^arq-/))
+    const item = db.contagens.find((x) => x.id === c.id)!.itens.find((i) => i.produto_id === "pr-cop-001")!
+    expect(item.quantidade).toBe(c.itens.find((i) => i.produto_id === "pr-cop-001")!.quantidade)
+  })
+
+  it("sem conexão avisa que a foto não foi enviada", async () => {
+    const c = contagemAberta()
+    renderizar(`/contagens/${c.id}`)
+    const u = userEvent.setup()
+    const entrada = await screen.findByLabelText("Foto de Copo descartável 200 mL")
+    mudarDemo({ semConexao: true })
+    await u.upload(entrada, foto())
+    expect(await screen.findByText(/a foto não foi enviada/)).toBeInTheDocument()
+    mudarDemo({ semConexao: false })
   })
 })

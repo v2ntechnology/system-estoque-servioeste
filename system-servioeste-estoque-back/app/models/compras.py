@@ -47,6 +47,7 @@ class AnexoCotacao(Base):
     cotacao_id: Mapped[uuid.UUID] = mapped_column(sa.ForeignKey("cotacoes.id", ondelete="CASCADE"), index=True)
     tipo: Mapped[str] = mapped_column(sa.String(12))  # proposta | nota_fiscal | boleto
     nome: Mapped[str] = mapped_column(sa.String(255))
+    arquivo_id: Mapped[uuid.UUID | None] = mapped_column(sa.ForeignKey("arquivos.id"))
     autor: Mapped[str] = mapped_column(sa.String(160))
     enviado_em: Mapped[datetime] = criado_em()
 

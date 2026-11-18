@@ -7,6 +7,7 @@ import { agoraIso, db, novoId, salvar, verCotacao, verProduto } from "../db"
 import type { CotacaoDb } from "../dados"
 import { sugerirCompra } from "../regras"
 import { API, erro, podeVerUnidade, rota, unidadesVisiveis } from "../util"
+import { guardarArquivo } from "./arquivos"
 import { registrarMovimentacao } from "./estoque"
 
 function achar(id: string, unidades: string[]): CotacaoDb | null {
@@ -142,8 +143,11 @@ export const comprasHandlers = [
     const tipo = form.get("tipo") as TipoAnexo
     const arquivo = form.get("arquivo")
     if (!(tipo in NOME_ANEXO)) return erro(422, "Tipo de anexo inválido.")
-    const nome = arquivo instanceof File ? arquivo.name : "arquivo.pdf"
-    c.anexos.push({ id: novoId("a"), tipo, nome, enviado_em: agoraIso(), autor: eu.nome })
+    if (!(arquivo instanceof File)) return erro(422, "Escolha o arquivo.")
+    const guardado = await guardarArquivo(arquivo, c.unidade_id, false)
+    if (guardado instanceof Response) return guardado
+    const nome = guardado.nome
+    c.anexos.push({ id: novoId("a"), tipo, nome, enviado_em: agoraIso(), autor: eu.nome, url: guardado.url })
     c.eventos.push({ data: agoraIso(), autor: eu.nome, descricao: `Anexou ${NOME_ANEXO[tipo]} (${nome})` })
     salvar()
     return verCotacao(c)

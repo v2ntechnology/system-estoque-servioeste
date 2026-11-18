@@ -5,7 +5,7 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
-from app.api.routes import cadastros, compras, contagens, eu, movimentacoes, painel, relatorios
+from app.api.routes import arquivos, cadastros, compras, contagens, eu, movimentacoes, painel, relatorios
 from app.core.config import get_settings
 
 settings = get_settings()
@@ -34,5 +34,5 @@ async def csrf_e_cabecalhos(request: Request, call_next):
     return response
 
 
-for modulo in (eu, cadastros, contagens, movimentacoes, painel, compras, relatorios):
+for modulo in (eu, arquivos, cadastros, contagens, movimentacoes, painel, compras, relatorios):
     app.include_router(modulo.router)

@@ -25,6 +25,7 @@ secrets/
 !docs/pdf/*.pdf
 !docs/Minimundo*.pdf
 uploads/
+arquivos/
 anexos/
 fotos/
 *.sql

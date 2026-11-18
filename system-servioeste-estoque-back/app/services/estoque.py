@@ -96,7 +96,8 @@ def view_contagem(c: Contagem, itens: list[ItemContagem], divergencias: list[Div
     }
     if completa:
         base["itens"] = [{"produto_id": str(i.produto_id), "quantidade": i.quantidade, "observacao": i.observacao,
-                          "foto": i.foto} for i in itens]
+                          "foto": i.foto, "foto_url": f"/api/v1/arquivos/{i.foto}" if i.foto else None}
+                         for i in itens]
         base["lista_divergencias"] = [{"produto_id": str(d.produto_id), "anterior": d.anterior, "entradas": d.entradas,
                                        "saidas": d.saidas, "esperado": d.esperado, "contado": d.contado}
                                       for d in divergencias]

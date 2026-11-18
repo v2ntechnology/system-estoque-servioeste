@@ -1,4 +1,4 @@
-import { Check, FileText, History, Paperclip, Printer, Send, ShieldCheck, Truck, Upload } from "lucide-react"
+import { Check, Download, FileText, History, Paperclip, Printer, Send, ShieldCheck, Truck, Upload } from "lucide-react"
 import { useRef, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 
@@ -266,7 +266,13 @@ function Anexos({ c }: { c: Cotacao }) {
             <li key={a.id} className="rounded-xl border p-2.5 text-sm">
               <div className="flex items-center gap-2">
                 <Badge variant="outline">{NOME_ANEXO[a.tipo]}</Badge>
-                <span className="min-w-0 truncate">{a.nome}</span>
+                <span className="min-w-0 flex-1 truncate">{a.nome}</span>
+                {a.url && (
+                  <a href={a.url} target="_blank" rel="noreferrer" download={a.nome}
+                    className="inline-flex h-7 shrink-0 items-center gap-1 rounded-lg border px-2 text-xs hover:bg-accent hover:text-brand">
+                    <Download className="size-3.5" /> Baixar
+                  </a>
+                )}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">{a.autor} · {dataHora(a.enviado_em)}</p>
             </li>
@@ -277,7 +283,7 @@ function Anexos({ c }: { c: Cotacao }) {
         <Select aria-label="Tipo do anexo" value={tipo} onChange={(e) => setTipo(e.target.value as TipoAnexo)} className="h-9 w-40">
           {(Object.keys(NOME_ANEXO) as TipoAnexo[]).map((t) => <option key={t} value={t}>{NOME_ANEXO[t]}</option>)}
         </Select>
-        <input ref={arquivo} type="file" accept=".pdf,.png,.jpg,.jpeg" className="sr-only" aria-label="Arquivo do anexo"
+        <input ref={arquivo} type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.heic" className="sr-only" aria-label="Arquivo do anexo"
           onChange={(e) => enviar(e.target.files?.[0])} />
         <Button variant="outline" size="sm" disabled={anexar.isPending} onClick={() => arquivo.current?.click()}>
           <Upload /> {anexar.isPending ? "Enviando…" : "Anexar arquivo"}

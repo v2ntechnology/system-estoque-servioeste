@@ -14,6 +14,10 @@ class Settings(BaseSettings):
     # Origens do front-end que podem fazer requisições que alteram dados (proteção CSRF).
     allowed_origins: str = "http://localhost:5177"
 
+    # Pasta das fotos da contagem e dos anexos de cotação (spec 005). Fora do git e, no Docker, num volume.
+    arquivos_dir: str = "arquivos"
+    arquivo_max_bytes: int = 10 * 1024 * 1024
+
     # Pessoa usada em desenvolvimento quando a requisição não vem do Hub (sem cabeçalhos X-Hub-User-*).
     # Nunca vale em produção (spec 004, research D2).
     dev_usuario_id: uuid.UUID = uuid.UUID("00000000-0000-4000-8000-000000000001")

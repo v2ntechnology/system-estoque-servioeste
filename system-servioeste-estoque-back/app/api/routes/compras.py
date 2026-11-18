@@ -20,7 +20,7 @@ from app.models import (
     Produto,
 )
 from app.regras import sugerir_compra
-from app.services import auditoria
+from app.services import arquivos, auditoria
 from app.services.compras import itens_por_cotacao, view_cotacao, view_resumo
 from app.services.estoque import aplicar_movimentacao, mapas_de_estoque
 
@@ -276,12 +276,13 @@ async def receber(id: str, eu: EuAtual, db: DB) -> dict:
 
 @router.post("/cotacoes/{id}/anexos")
 async def anexar(id: str, eu: EuAtual, db: DB, tipo: str = Form(...), arquivo: UploadFile = File(...)) -> dict:  # noqa: B008
-    """Registra o anexo. O arquivo em si vai para a pasta do servidor numa spec própria (fora do escopo da 004)."""
+    """Guarda o anexo (proposta, nota fiscal ou boleto) na pasta do servidor (spec 005)."""
     c = await _cotacao(db, eu, id)
     if tipo not in NOME_ANEXO:
         raise HTTPException(422, "Tipo de anexo inválido.")
-    nome = arquivo.filename or "arquivo.pdf"
-    db.add(AnexoCotacao(cotacao_id=c.id, tipo=tipo, nome=nome, autor=eu.nome))
+    guardado = await arquivos.salvar(db, eu, c.unidade_id, arquivo)
+    nome = guardado.nome
+    db.add(AnexoCotacao(cotacao_id=c.id, tipo=tipo, nome=nome, autor=eu.nome, arquivo_id=guardado.id))
     _evento(db, c, eu, f"Anexou {NOME_ANEXO[tipo]} ({nome})")
     await db.commit()
     return await view_cotacao(db, c)
