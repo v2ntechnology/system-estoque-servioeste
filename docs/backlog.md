@@ -30,6 +30,14 @@ Legenda: [x] feito · [ ] a fazer. Itens marcados **Proposta** ainda não foram 
 - [ ] Apresentar à Servioeste seguindo o roteiro da demonstração e anotar os ajustes.
 - [ ] Responder os pontos em aberto (campo vazio, quem aprova, frequência das contagens, planilhas de saída).
 
+## Etapa 1b — Novo visual (spec 002)
+
+- [x] Sidebar do Radar com barra de aplicativos e regra de cores preto, branco e verde.
+- [x] Catálogo, Cotações, Contagens, Produto e Painel nas referências aprovadas.
+- [x] Entrada verde e saída vermelha; nenhuma barra de rolagem.
+- [ ] Levar as demais telas (Movimentações, Fornecedores, Relatórios, Importação, Unidades) ao estilo de lista.
+- [ ] Lista de aplicativos vinda do Hub, só com os liberados para a pessoa.
+
 ## Etapa 2 — Back-end (Proposta)
 
 - [ ] `system-servioeste-estoque-back`: FastAPI + PostgreSQL + Alembic, contrato `openapi.yaml` e tipos gerados no front.

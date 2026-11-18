@@ -24,7 +24,17 @@ Cada pessoa vê **só as unidades e as funções liberadas para ela**:
 | Aprovador | Aprova as cotações (fica registrado o nome e a data). |
 | Administrador | Tudo isso, mais a importação de planilhas e o cadastro das unidades. |
 
-No topo da tela ficam o seu nome, as abas do que você pode usar, a **unidade** que está vendo (ou todas) e o menu.
+## Como navegar
+
+À esquerda ficam duas colunas:
+
+- a **barra de aplicativos**, com um ícone para cada aplicativo da Servioeste (Estoque, Radar, Ponto, Resíduos). Toque
+  no ícone para ir a outro aplicativo; o **+** abre o Hub com todos eles;
+- o **menu do Estoque**, com as telas agrupadas (Estoque, Compras, Análise, Administração), a **unidade** que você
+  está vendo (ou todas) e, ao lado de algumas telas, um número com o que precisa de atenção. Embaixo fica o seu nome:
+  toque nele para mudar o tema (claro ou escuro) ou voltar ao Hub.
+
+A tela aberta fica marcada em verde. No celular, o menu abre pelo botão ☰ no alto da tela.
 
 ## As telas
 

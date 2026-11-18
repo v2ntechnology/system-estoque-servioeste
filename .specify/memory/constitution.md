@@ -1,7 +1,19 @@
 <!--
 Relatório de sincronização
-- Versão: — → 1.0.0 (primeira versão)
-- Núcleo (I a VI) copiado igual da constituição do Hub (1.0.1); princípios VII a XI próprios do Estoque.
+- Versão: 2.1.0 → 2.1.1 (esclarecimento)
+- XI: entrada em verde e saída em vermelho em todo o sistema (pedido da equipe na spec 002).
+
+Anterior
+- Versão: 2.0.0 → 2.1.0 (orientação ampliada)
+- XI: acrescentada a regra "nunca aparece barra de rolagem" (pedido da equipe na spec 002).
+- Núcleo (I a VI): sem mudança.
+
+Anterior
+- Versão: 1.0.0 → 2.0.0 (princípio redefinido)
+- XI "Visual do Servioeste Hub, pensado para o celular" virou "Moldura do Radar e só preto, branco e verde":
+  sidebar com barra de apps no lugar da barra do topo; verde só para selecionado/foco/hover; amarelo só como cor de
+  situação. Pedido da equipe na spec 002.
+- Núcleo (I a VI): sem mudança.
 - Modelos em .specify/templates/: sem mudança necessária
 -->
 
@@ -106,14 +118,26 @@ e refletidos na interface (o que a pessoa não pode fazer não aparece). A inter
 
 **Por quê**: o minimundo define que cada pessoa vê apenas as unidades e as funções que lhe foram liberadas.
 
-### XI. Visual do Servioeste Hub, pensado para o celular [Estoque]
+### XI. Moldura do Radar e só preto, branco e verde [Estoque]
 
-A interface segue a identidade do Hub: os mesmos tokens de cor (verde Servioeste #6ca33c), fonte Rubik, logo, tema
-claro e escuro e os mesmos componentes de layout e de UI do Ponto e do Resíduos. Cores só pelos tokens do tema, nunca
-soltas no componente. A contagem é feita andando pelo almoxarifado: toda tela de contagem funciona bem no celular
-(alvos de toque grandes, teclado numérico, sem rolagem horizontal).
+A interface usa a moldura do Radar: **barra de apps** à esquerda (ícones dos aplicativos da Servioeste, para ir de um
+app a outro) e **sidebar** com as telas do Estoque, no lugar da barra do topo do Hub e do Ponto. Fonte Rubik, logo e
+tema claro e escuro do Hub; componentes de UI do Ponto e do Resíduos.
 
-**Por quê**: todos os apps da Servioeste parecem um só, e quem conta usa o celular.
+Cores: **preto, branco e cinzas** em toda a interface; o botão principal é preto (branco no tema escuro). O **verde
+Servioeste** (#6ca33c) só marca o que está selecionado, o foco e o hover. **Nada de amarelo** em fundos, textos,
+valores ou botões. As cores de sucesso, aviso e erro só aparecem para indicar situação (medidor, ponto de um selo,
+ícone de alerta, mensagem de erro), para diferenciar **entrada (verde) e saída (vermelho)** de estoque (`SeloMovimento` e `QtdMovimento`) e em gráficos que precisem de mais detalhe. Cores só pelos tokens do tema, nunca
+soltas no componente. Tela nova segue uma referência aprovada em `docs/img/design/`.
+
+**Nunca aparece barra de rolagem**, em lugar nenhum: o conteúdo continua rolando com a roda do mouse, o toque e o
+teclado, mas a barra fica escondida (regra global em `index.css`).
+
+A contagem é feita andando pelo almoxarifado: toda tela de contagem funciona bem no celular (alvos de toque grandes,
+teclado numérico, sem rolagem horizontal).
+
+**Por quê**: a equipe escolheu a navegação do Radar para transitar entre os apps, e um visual limpo em preto e branco
+deixa o verde e os alertas chamarem atenção só quando importam.
 
 ## Restrições do Estoque
 
@@ -143,4 +167,4 @@ Esta constituição vale acima de qualquer outro guia do projeto. Todo `plan.md`
 primeiro no Hub e copiada igual para cá. Versão: MAIOR remove ou redefine princípio; MENOR acrescenta princípio ou
 seção; CORREÇÃO só ajusta texto.
 
-**Versão**: 1.0.0 | **Ratificada**: 2026-11-17 | **Última alteração**: 2026-11-17
+**Versão**: 2.1.1 | **Ratificada**: 2026-11-17 | **Última alteração**: 2026-11-18

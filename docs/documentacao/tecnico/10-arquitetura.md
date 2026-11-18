@@ -18,13 +18,26 @@ A mesma das outras automações da Servioeste (constituição, núcleo VI):
 | `src/lib/tipos.ts` | Contrato da API `/api/v1` (vira tipos gerados do `openapi.yaml` quando o back-end existir). |
 | `src/lib/api.ts` | Cliente HTTP (`api`, `post`, `patch`, `put`, `query`), erro `ApiError(status, detail)`. |
 | `src/lib/papeis.ts` | Papéis, ações e `pode(eu, acao)`. Só esconde na interface; quem decide é a API. |
-| `src/lib/unidade.tsx` | Unidade ativa da barra do topo (`""` = todas), guardada em `estoque-unidade`. |
+| `src/lib/unidade.tsx` | Unidade ativa da sidebar (`""` = todas), guardada em `estoque-unidade`. |
 | `src/features/<área>/api.ts` | Hooks do TanStack Query por área; chave de query = recurso (`["contagens", unidade]`). |
 | `src/features/contagens/fila.ts` | Fila da contagem no aparelho (offline). |
 | `src/pages/` | Uma página por rota; rotas em `src/rotas.tsx`. |
-| `src/components/` | `ui/` (componentes base), `layout/` (AppShell, TopBar, UserMenu, RequirePapel), `form/`. |
+| `src/components/` | `ui/` (componentes base, `medidor`), `layout/` (AppShell, AppRail, Sidebar, UserMenu, RequirePapel), `form/`. |
 | `src/mocks/` | Dados simulados (ver capítulo 12). |
 | `src/dev/` + `dev-tools/` | Área do desenvolvedor (`/dev`). |
+
+## Moldura e cores (spec 002)
+
+- `components/layout/AppShell.tsx`: cartão à esquerda com `AppRail` (barra de apps, lista em `apps.ts`; em dev
+  aponta para as portas locais, em produção para `/<slug>/`) e `Sidebar` (grupos em `navegacao.ts`, contadores do
+  `GET /painel`, seletor de unidade, `UserMenu` no pé, abrindo para cima). Até `lg` (1024 px) vira barra fina com
+  gaveta. A moldura é a do Radar (`IconRail` + painel).
+- Cores (constituição 2.0.0, princípio XI): `--primary` preto/branco (botão principal); `--brand` verde só em
+  selecionado, foco e hover; `Badge` `brand`/`warning`/`destructive` e `Faixa` são neutros com ponto ou ícone
+  colorido; `Kpi` nunca colore o valor. `--warning` e `--destructive` só indicam situação e entram em gráficos.
+- `components/ui/medidor.tsx`: semicírculo com tracinhos; `features/catalogo/util.ts::situacao` (abaixo do mínimo =
+  crítica, até 1,5× = atenção, acima = boa, `null` = não contado).
+- Referências aprovadas em `docs/img/design/referencias/`.
 
 ## Fluxo de dados
 
@@ -34,7 +47,7 @@ As telas nunca importam `src/mocks`.
 ## Identidade e permissões
 
 Sem login próprio (núcleo IV). `GET /api/v1/eu` devolve a pessoa (id do Hub, nome, e-mail, papéis do Estoque e
-unidades liberadas). A barra do topo mostra só as abas dos papéis da pessoa; `RequirePapel` protege as rotas;
+unidades liberadas). A sidebar mostra só as telas dos papéis da pessoa; `RequirePapel` protege as rotas;
 "Voltar ao Hub" usa `VITE_HUB_URL`.
 
 ## Regras que valem em todo lugar

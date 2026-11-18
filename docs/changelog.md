@@ -2,6 +2,29 @@
 
 Registro diário do que foi adicionado, alterado e removido no projeto. A entrada mais recente fica no topo.
 
+## 2026-11-18
+
+### Adicionado
+
+- Spec 002 (`specs/002-sidebar-e-cores/`) e referências visuais aprovadas em `docs/img/design/referencias/`.
+- **Barra de aplicativos** à esquerda para ir do Estoque ao Radar, ao Ponto, ao Resíduos e ao Hub.
+- **Catálogo** no estilo da referência: estatísticas do estoque, medidor de situação (Boa, Atenção, Crítica) e
+  paginação.
+- **Cotações** e **Contagens** com o resumo da escolhida aberto ao lado da lista, com link próprio.
+- Indicadores de contagem: unidades em dia, em andamento, divergências e acurácia do estoque.
+- Botões − e + na contagem, com atalho de embalagem.
+
+### Alterado
+
+- A barra do topo deu lugar à **sidebar do Radar**, com as telas agrupadas e contadores do que precisa de atenção.
+- Cores: só preto, branco e cinza, com verde para o que está selecionado; nada de amarelo fora dos indicadores de
+  situação. Entrada de estoque em verde e saída em vermelho em todas as telas. Constituição 2.1.1.
+- Nenhuma barra de rolagem aparece mais no sistema.
+- Painel com indicadores no novo estilo (tendência em relação à contagem anterior) e a lista de itens abaixo do
+  mínimo com cobertura e falta.
+- Histórico de contagens mais leve, agrupado por mês; detalhe do produto com resumo, cobertura em dias e mínimo
+  editável pelo lápis; contagem em lista compacta agrupada por categoria.
+
 ## 2026-11-17
 
 ### Adicionado

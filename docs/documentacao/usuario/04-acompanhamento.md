@@ -14,7 +14,11 @@ Tocar em qualquer item abre o detalhe.
 
 ## Catálogo
 
-Um catálogo único para todas as unidades, com código, nome, categoria, unidade de medida e embalagem. Ao abrir um
+Um catálogo único para todas as unidades. A lista mostra, para cada produto, o código, a categoria, o estoque, a
+embalagem e a **situação**, com um medidor: **Boa** (verde, bem acima do mínimo), **Atenção** (perto do mínimo),
+**Crítica** (abaixo do mínimo) ou **Não contado**. No alto ficam as estatísticas do estoque (produtos, abaixo do
+mínimo, situação geral, consumo do mês e não contados), que podem ser recolhidas. Dá para buscar, filtrar por
+categoria e ordenar por situação, nome ou saldo; a lista mostra 10 produtos por página. Ao abrir um
 produto você vê o saldo e o **estoque mínimo** de cada unidade (o administrador e o comprador podem mudar o mínimo),
 o consumo médio por mês, os **lotes e validades**, os últimos preços aprovados e as últimas movimentações.
 
