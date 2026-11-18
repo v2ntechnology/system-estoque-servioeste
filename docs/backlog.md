@@ -42,10 +42,12 @@ Legenda: [x] feito · [ ] a fazer. Itens marcados **Proposta** ainda não foram 
 
 ## Etapa 2 — Back-end (Proposta)
 
-- [ ] `system-servioeste-estoque-back`: FastAPI + PostgreSQL + Alembic, contrato `openapi.yaml` e tipos gerados no front.
-- [ ] Identidade pelo contrato do Hub (`X-Hub-User-*`), perfil local com papéis e unidades.
-- [ ] Regras com testes antes: importação, saldo, divergência, consumo médio e PDF.
-- [ ] Auditoria na mesma transação; contagens e aprovações imutáveis.
+- [x] `system-servioeste-estoque-back`: FastAPI + PostgreSQL + Alembic com o contrato de `src/lib/tipos.ts` (spec 004).
+- [x] Identidade pelo contrato do Hub (`X-Hub-User-*`), perfil local com papéis e unidades.
+- [x] Regras com testes antes: saldo, divergência, consumo médio e confirmação da importação.
+- [ ] Testes de PDF e da leitura de planilhas (quando existirem).
+- [x] Auditoria na mesma transação; contagens e aprovações imutáveis.
+- [ ] Rodar com PostgreSQL no Docker e conferir as telas com `make front`.
 - [ ] Importação real das planilhas (pandas/openpyxl) e PDF real (WeasyPrint).
 - [ ] Fotos e anexos em pasta própria no servidor.
 - [ ] Tarefas agendadas (APScheduler): aviso de contagem, atrasos, validade, consumo, resumo semanal por e-mail.

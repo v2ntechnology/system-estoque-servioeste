@@ -2,16 +2,19 @@
 
 ## Pré-requisitos
 
-Node 24+ e pnpm 9 (WSL/Linux). Para os PDFs da documentação, `uv`.
+Node 24+ e pnpm 9 (WSL/Linux); `uv` (Python 3.12 do back-end e PDFs); Docker Desktop ligado para o PostgreSQL
+(`make up`). Sem Docker, `make api-local` usa SQLite em arquivo.
 
 ## Comandos (na raiz; `make help` lista todos)
 
 ```bash
-make install        # dependências do front-end
+make install        # dependências do front-end e do back-end (venv com uv)
+make api-local      # API sem Docker (SQLite); make seed-local grava os dados de exemplo
+make up             # Postgres + API no Docker; make seed grava os dados de exemplo
 make front-mock     # front com dados simulados em http://localhost:5177
 make front          # front ligado à API (8004), quando ela existir
-make test           # Vitest + build (tsc) + checagem de simulados no build
-make lint           # ESLint
+make test           # pytest + Vitest + build (tsc) + checagem de simulados no build
+make lint           # ruff + ESLint
 make docs           # PDFs do manual e da documentação técnica (docs/pdf/)
 ```
 
@@ -19,7 +22,8 @@ Teste isolado: `cd system-servioeste-estoque-front && pnpm vitest run tests/regr
 
 ## Portas
 
-Vite **5177**, API **8004**, Postgres **5435** (não colidem com Radar, Hub, Ponto e Resíduos).
+Vite **5177**, API **8004**, Postgres **5435** (não colidem com Radar, Hub, Ponto e Resíduos). O front de
+desenvolvimento manda `/api` para a 8004.
 
 ## Testes
 

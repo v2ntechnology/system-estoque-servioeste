@@ -7,8 +7,8 @@ A mesma das outras automações da Servioeste (constituição, núcleo VI):
 - **Front-end** (`system-servioeste-estoque-front/`): React 19, Vite 6, TypeScript, Tailwind 4, componentes no estilo
   shadcn/ui copiados do Ponto e do Resíduos, TanStack Query, react-router 7, lucide-react, fonte Rubik. Dados
   simulados com MSW.
-- **Back-end** (a fazer, `system-servioeste-estoque-back/`): Python 3.12, FastAPI, SQLAlchemy async, Alembic,
-  PostgreSQL; Excel com pandas e openpyxl; PDF com WeasyPrint; tarefas agendadas com APScheduler.
+- **Back-end** (`system-servioeste-estoque-back/`, spec 004; ver capítulo 13): Python 3.12, FastAPI, SQLAlchemy
+  async, Alembic, PostgreSQL. A fazer: Excel com pandas e openpyxl, PDF com WeasyPrint, tarefas com APScheduler.
 - **Infra** (a fazer): Docker Compose e Caddy, no domínio único `automacoes.servioeste.com.br/estoque/`.
 
 ## Onde está cada coisa (front-end)
@@ -51,7 +51,8 @@ validada com o script da skill dataviz nos dois temas. `Kpi` com `onAbrir` vira 
 
 ## Fluxo de dados
 
-Tela → hook de `features/<área>/api.ts` → `lib/api.ts` → `/api/v1/...`. Hoje quem responde é o MSW; depois, a API.
+Tela → hook de `features/<área>/api.ts` → `lib/api.ts` → `/api/v1/...`. Com `make front-mock` quem responde é o
+MSW (demonstração); com `make front`, a API (spec 004).
 As telas nunca importam `src/mocks`.
 
 ## Identidade e permissões

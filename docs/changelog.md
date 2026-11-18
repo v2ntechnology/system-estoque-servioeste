@@ -6,6 +6,11 @@ Registro diário do que foi adicionado, alterado e removido no projeto. A entrad
 
 ### Adicionado
 
+- **Back-end** (spec 004, `system-servioeste-estoque-back/`): API com o mesmo contrato das telas para cadastros,
+  contagens, movimentações, painel, cotações, fornecedores, relatórios e gráficos, com identidade vinda do Hub,
+  permissões por papel e unidade, auditoria, migração do banco e dados de exemplo (`make seed`).
+- Comandos para rodar a API no Docker (`make up`) ou sem Docker com SQLite (`make api-local`).
+
 - Spec 002 (`specs/002-sidebar-e-cores/`) e referências visuais aprovadas em `docs/img/design/referencias/`.
 - **Barra de aplicativos** à esquerda para ir do Estoque ao Radar, ao Ponto, ao Resíduos e ao Hub.
 - **Catálogo** no estilo da referência: estatísticas do estoque, medidor de situação (Boa, Atenção, Crítica) e
