@@ -28,6 +28,8 @@ Registro diário do que foi adicionado, alterado e removido no projeto. A entrad
   editável pelo lápis; contagem em lista compacta agrupada por categoria.
 - Painel: contagens com um só indicador por unidade e o progresso da contagem aberta; divergências com esperado →
   contado e quanto sumiu; cotações com as quatro etapas em tracinhos; lotes sem vencimento próximo viram uma linha.
+- Manual do sistema e documentação técnica atualizados com o novo visual, os resumos ao lado das listas, as cores
+  de entrada e saída e os gráficos.
 
 ## 2026-11-17
 

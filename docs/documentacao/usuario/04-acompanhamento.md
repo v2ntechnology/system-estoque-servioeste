@@ -4,7 +4,7 @@
 
 É a primeira tela. Mostra, para as unidades que você vê:
 
-- itens **abaixo do mínimo**, com quanto falta;
+- itens **abaixo do mínimo**, com o saldo, quanto do mínimo está coberto e quanto falta;
 - **contagens** atrasadas em relação ao calendário da unidade;
 - **cotações em aberto**;
 - **divergências** da última contagem;
@@ -19,18 +19,22 @@ embalagem e a **situação**, com um medidor: **Boa** (verde, bem acima do míni
 **Crítica** (abaixo do mínimo) ou **Não contado**. No alto ficam as estatísticas do estoque (produtos, abaixo do
 mínimo, situação geral, consumo do mês e não contados), que podem ser recolhidas. Dá para buscar, filtrar por
 categoria e ordenar por situação, nome ou saldo; a lista mostra 10 produtos por página. Ao abrir um
-produto você vê o saldo e o **estoque mínimo** de cada unidade (o administrador e o comprador podem mudar o mínimo),
-o consumo médio por mês, os **lotes e validades**, os últimos preços aprovados e as últimas movimentações.
+produto você vê a situação, o saldo, o mínimo, o consumo médio e a **cobertura** (quantos dias o saldo dura); o
+estoque de cada unidade (o administrador e o comprador mudam o mínimo pelo lápis); as últimas movimentações; os
+últimos preços aprovados; e os **lotes e validades**.
 
 ## Movimentações
 
-Lista o que entrou e saiu de cada unidade. **Registrar** permite lançar uma entrada ou uma saída à mão. As entradas
+Lista o que entrou e saiu de cada unidade. **Entrada aparece em verde** (↙) e **saída em vermelho** (↗), aqui e em
+todas as telas. **Registrar** permite lançar uma entrada ou uma saída à mão. As entradas
 das cotações recebidas aparecem sozinhas. Transferência entre unidades ainda não faz parte do sistema.
 
 ## Relatórios
 
 Escolha a unidade e o mês para ver entradas, saídas, gasto e o saldo de cada produto, comparados ao mês anterior.
-**Exportar para Excel** baixa o relatório para abrir no Excel. O resumo semanal por e-mail chega numa próxima etapa.
+Tocar nos quadros **Entradas**, **Saídas** ou **Gasto** abre o **gráfico** do histórico: por dia do mês ou pelos
+últimos 6 meses, em área, colunas ou tabela, com a divisão por categoria. **Exportar para Excel** baixa o relatório
+para abrir no Excel. O resumo semanal por e-mail chega numa próxima etapa.
 
 ## Importação das planilhas atuais
 

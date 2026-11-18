@@ -6,6 +6,12 @@ Toda cotação passa por quatro etapas, sempre visíveis no topo da tela:
 
 **Rascunho → Enviada → Aprovada → Recebida**
 
+## Ver uma cotação sem sair da lista
+
+Em **Cotações**, tocar numa cotação abre o resumo à direita: fornecedor, itens com preço, total e os botões da etapa
+(Enviar, Aprovar ou Receber), além de **PDF** e **Abrir** (a página completa). O endereço da página guarda a
+cotação escolhida, então dá para mandar o link para outra pessoa.
+
 ## Montar uma cotação
 
 Em **Cotações**, toque em **Nova cotação**, dê um título e escolha a unidade. Os itens podem vir de três lugares:

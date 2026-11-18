@@ -37,7 +37,17 @@ A mesma das outras automações da Servioeste (constituição, núcleo VI):
   colorido; `Kpi` nunca colore o valor. `--warning` e `--destructive` só indicam situação e entram em gráficos.
 - `components/ui/medidor.tsx`: semicírculo com tracinhos; `features/catalogo/util.ts::situacao` (abaixo do mínimo =
   crítica, até 1,5× = atenção, acima = boa, `null` = não contado).
+- Entrada/saída: `components/ui/movimento.tsx` (`SeloMovimento`, `QtdMovimento`), verde e vermelho em todo lugar.
+- Sem barra de rolagem: regra global em `index.css`.
+- Listas com resumo ao lado: Cotações (`?cotacao=`) e Contagens (`?contagem=`); no celular o painel cobre a lista.
 - Referências aprovadas em `docs/img/design/referencias/`.
+
+## Gráficos (spec 003)
+
+`components/graficos/GraficoSerie.tsx`: `GraficoSerie` (área ou colunas, SVG próprio, cruz e tooltip, mede a largura
+com `ResizeObserver`), `TabelaSerie` e `ListaPartes` (no lugar de pizza). Cor no token `--grafico` (#6ca33c),
+validada com o script da skill dataviz nos dois temas. `Kpi` com `onAbrir` vira botão; a janela é
+`features/relatorios/GraficoDialog.tsx`, que lê `GET /relatorios/serie` e converte os pontos pela escala da resposta.
 
 ## Fluxo de dados
 
@@ -63,5 +73,5 @@ unidades liberadas). A sidebar mostra só as telas dos papéis da pessoa; `Requi
 
 As da documentação técnica (`docs/Documentação Técnica — Estoque e Cotações Servioeste.md`), mais:
 `GET /eu`, `GET /categorias`, `PATCH /unidades/{id}`, `GET /contagens`, `GET /contagens/{id}`,
-`GET /cotacoes/sugestoes`, `GET|POST /modelos-cotacao`, `POST /cotacoes/{id}/enviar`,
+`GET /cotacoes/sugestoes`, `GET /relatorios/serie?unidade&metrica=entradas|saidas|gasto&escala=dia|mes&mes`, `GET|POST /modelos-cotacao`, `POST /cotacoes/{id}/enviar`,
 `GET /fornecedores/{id}/cotacoes`, `PATCH /importacao/{id}/linhas/{linha}`.

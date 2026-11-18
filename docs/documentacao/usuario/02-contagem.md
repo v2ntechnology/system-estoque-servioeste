@@ -8,11 +8,19 @@ pelo almoxarifado.
 1. Em **Contagens**, toque em **Abrir contagem de hoje** na sua unidade (ou **Continuar contagem**, se já houver uma
    aberta).
 2. Busque o produto pelo nome ou código, ou escolha a categoria (Sacos, Contentores, EPI, Limpeza…).
-3. Digite a quantidade **na unidade de medida do produto**. Quando o produto vem em embalagem (ex.: pacote com 8
-   rolos), o botão **+1 pacote** soma a embalagem inteira.
+3. Digite a quantidade **na unidade de medida do produto**, ou use os botões **−** e **+** ao lado do campo. Quando
+   o produto vem em embalagem (ex.: pacote com 8 rolos), o atalho **+ 1 pacote** soma a embalagem inteira. Os
+   produtos aparecem agrupados por categoria, e um ✓ verde marca os que já foram contados.
 4. Se precisar, escreva uma **observação** (ex.: "2 caixas amassadas") ou tire uma **foto**.
 
 O botão **Faltam N** mostra só os produtos que ainda não foram contados.
+
+## Acompanhar as contagens
+
+A tela **Contagens** mostra, no alto, quantas unidades estão em dia, as contagens em andamento, as divergências e a
+**acurácia do estoque** (quantos itens contados bateram com o esperado). Cada unidade tem um cartão com a última e a
+próxima contagem e uma tirinha das últimas contagens (vermelha quando houve divergência). No histórico, agrupado por
+mês, tocar numa contagem abre o resumo ao lado, sem sair da lista.
 
 ## Vazio é "não contado"; zero é zero
 

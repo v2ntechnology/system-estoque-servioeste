@@ -28,6 +28,9 @@ Vite **5177**, API **8004**, Postgres **5435** (não colidem com Radar, Hub, Pon
   confere painel, papéis, contagem e cotação.
 - `tests/dev.test.ts`: leitores da área do dev.
 - O Node 24+ tem um `localStorage` global que encobre o do jsdom; `tests/setup.ts` coloca um armazenamento em memória.
+- O react-router passa o AbortSignal do jsdom ao `Request` do Node, que o recusa; `tests/setup.ts` descarta o
+  `signal`. Sem isso, qualquer teste que muda a URL (ex.: abrir o resumo ao lado) falha.
+- `tests/rotas.test.tsx` abre todas as rotas: rota nova entra lá.
 
 ## Fluxo de trabalho
 
