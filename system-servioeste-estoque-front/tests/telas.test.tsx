@@ -46,10 +46,25 @@ describe("contagem (princípio VIII)", () => {
     const total = c.itens.length
     const eraContado = c.itens.find((i) => i.produto_id === "pr-cop-001")!.quantidade !== null
     const esperado = eraContado ? contadosAntes : contadosAntes + 1
-    expect(screen.getByText(`${esperado}/${total} · ${Math.round((esperado / total) * 100)}%`)).toBeInTheDocument()
+    const barra = () => screen.getByRole("progressbar", { name: "Itens contados" })
+    expect(barra()).toHaveAttribute("aria-valuenow", String(esperado))
+    expect(barra()).toHaveAttribute("aria-valuemax", String(total))
     await u.clear(campo)
     expect(campo).toHaveValue("")
-    expect(screen.getByText(`${esperado - 1}/${total} · ${Math.round(((esperado - 1) / total) * 100)}%`)).toBeInTheDocument()
+    expect(barra()).toHaveAttribute("aria-valuenow", String(esperado - 1))
+  })
+
+  it("+ soma 1 a partir do vazio e − nunca transforma vazio em zero", async () => {
+    const c = contagemAberta()
+    renderizar(`/contagens/${c.id}`)
+    const u = userEvent.setup()
+    const campo = await screen.findByLabelText("Quantidade de Copo descartável 200 mL")
+    await u.clear(campo)
+    expect(screen.getByRole("button", { name: "Menos 1 de Copo descartável 200 mL" })).toBeDisabled()
+    await u.click(screen.getByRole("button", { name: "Mais 1 de Copo descartável 200 mL" }))
+    expect(campo).toHaveValue("1")
+    await u.click(screen.getByRole("button", { name: "Menos 1 de Copo descartável 200 mL" }))
+    expect(campo).toHaveValue("0")
   })
 
   it("envia a fila e finalizar com itens vazios pede confirmação sem virar zero", async () => {
@@ -71,5 +86,31 @@ describe("cotação", () => {
     renderizar("/cotacoes/co-3", "p-roberto")
     expect(await screen.findByRole("button", { name: /Aprovar/ })).toBeInTheDocument()
     expect(screen.queryByRole("button", { name: /Marcar como recebida/ })).not.toBeInTheDocument()
+  })
+})
+
+describe("lista de cotações com resumo ao lado (spec 002)", () => {
+  it("clicar numa cotação abre o resumo com itens, total e ações", async () => {
+    renderizar("/cotacoes", "p-roberto")
+    const u = userEvent.setup()
+    await u.click(await screen.findByRole("button", { name: /EPI — Queimados/ }))
+    const painel = await screen.findByLabelText("Resumo da cotação")
+    expect(await within(painel).findByText("Cotação #0003")).toBeInTheDocument()
+    expect(within(painel).getByRole("button", { name: /Aprovar/ })).toBeInTheDocument()
+    await u.click(within(painel).getByRole("button", { name: "Fechar resumo" }))
+    expect(screen.queryByLabelText("Resumo da cotação")).not.toBeInTheDocument()
+  })
+})
+
+describe("contagens com resumo ao lado (spec 002)", () => {
+  it("mostra os indicadores e abre o resumo da contagem com divergências", async () => {
+    renderizar("/contagens")
+    expect(await screen.findByText("Acurácia do estoque")).toBeInTheDocument()
+    const u = userEvent.setup()
+    await u.click(await screen.findByRole("tab", { name: /Com divergência/ }))
+    const [linha] = await screen.findAllByRole("button", { pressed: false, name: /Queimados/ })
+    await u.click(linha)
+    const painel = await screen.findByLabelText("Resumo da contagem")
+    expect((await within(painel).findAllByText(/Máscara PFF2|Álcool 70%/)).length).toBeGreaterThan(0)
   })
 })

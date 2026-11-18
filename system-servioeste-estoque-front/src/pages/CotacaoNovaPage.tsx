@@ -200,7 +200,7 @@ function OrigemSugestoes({ unidade, nome, onAdicionar }: {
             <TableRow key={s.produto_id}>
               <TableCell><Checkbox aria-label={`Incluir ${nome(s.produto_id)}`} checked={!desmarcados.has(s.produto_id)} onChange={() => alternar(s.produto_id)} /></TableCell>
               <TableCell className="min-w-48">{nome(s.produto_id)}</TableCell>
-              <TableCell className="text-right tabular-nums text-warning">{numero(s.saldo)}</TableCell>
+              <TableCell className="text-right font-medium tabular-nums">{numero(s.saldo)}</TableCell>
               <TableCell className="text-right tabular-nums">{numero(s.minimo)}</TableCell>
               <TableCell className="text-right tabular-nums">{numero(s.consumo_mensal)}</TableCell>
               <TableCell className="text-right font-medium tabular-nums">{numero(s.sugerido)}</TableCell>

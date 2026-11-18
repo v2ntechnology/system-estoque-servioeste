@@ -8,6 +8,7 @@ import { Faixa, Kpi } from "@/components/ui/card"
 import { Carregando, ErroCarga, Vazio } from "@/components/ui/estados"
 import { Select } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { QtdMovimento } from "@/components/ui/movimento"
 import { useMapaProdutos } from "@/features/catalogo/api"
 import { useRelatorioMensal } from "@/features/relatorios/api"
 import { useNomeUnidade, useUnidades } from "@/features/sessao/api"
@@ -32,7 +33,7 @@ function Variacao({ atual, anterior }: { atual: number | null; anterior: number 
   const d = atual - anterior
   const Icone = d > 0 ? ArrowUpRight : d < 0 ? ArrowDownRight : Minus
   return (
-    <span className={cn("inline-flex items-center gap-1 tabular-nums", d > 0 && "text-brand", d < 0 && "text-warning", d === 0 && "text-muted-foreground")}>
+    <span className={cn("inline-flex items-center gap-1 tabular-nums", d === 0 && "text-muted-foreground")}>
       <Icone className="size-3.5" /> {d > 0 ? "+" : ""}{numero(d)}
     </span>
   )
@@ -96,8 +97,9 @@ export function RelatoriosPage() {
               <div className="grid gap-3 sm:grid-cols-3">
                 <Kpi rotulo="Entradas" valor={numero(r.totais.entradas)} detalhe="itens recebidos no mês" />
                 <Kpi rotulo="Saídas" valor={numero(r.totais.saidas)} detalhe="itens consumidos no mês" />
-                <Kpi rotulo="Gasto" valor={reais(r.totais.gasto)} tom="brand"
-                  detalhe={varGasto === null ? `mês anterior: ${reais(r.totais.gasto_mes_anterior)}` : `${varGasto > 0 ? "+" : ""}${varGasto}% em relação ao mês anterior`} />
+                <Kpi rotulo="Gasto" valor={reais(r.totais.gasto)}
+                  tendencia={varGasto === null ? undefined : { texto: `${varGasto > 0 ? "+" : ""}${varGasto}%`, direcao: varGasto > 0 ? "sobe" : varGasto < 0 ? "desce" : "igual", boa: varGasto <= 0 }}
+                  detalhe={varGasto === null ? `mês anterior: ${reais(r.totais.gasto_mes_anterior)}` : "em relação ao mês anterior"} />
               </div>
 
               <div className="rounded-2xl border bg-background">
@@ -117,8 +119,8 @@ export function RelatoriosPage() {
                       <TableRow key={l.produto_id}>
                         <TableCell className="min-w-56">{nomeProduto(l.produto_id)}</TableCell>
                         <TableCell className="text-right tabular-nums">{numero(l.saldo_inicial)}</TableCell>
-                        <TableCell className="text-right tabular-nums">{l.entradas ? `+${numero(l.entradas)}` : "0"}</TableCell>
-                        <TableCell className="text-right tabular-nums">{l.saidas ? `−${numero(l.saidas)}` : "0"}</TableCell>
+                        <TableCell className="text-right tabular-nums"><QtdMovimento tipo="entrada" quantidade={l.entradas} /></TableCell>
+                        <TableCell className="text-right tabular-nums"><QtdMovimento tipo="saida" quantidade={l.saidas} /></TableCell>
                         <TableCell className="text-right font-medium tabular-nums">{numero(l.saldo_final)}</TableCell>
                         <TableCell className="text-right"><Variacao atual={l.saldo_final} anterior={l.saldo_mes_anterior} /></TableCell>
                       </TableRow>

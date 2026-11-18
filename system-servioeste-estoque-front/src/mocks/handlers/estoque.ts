@@ -134,6 +134,12 @@ export const estoqueHandlers = [
         const ultima = db.contagens.filter((c) => c.unidade_id === u && c.situacao === "finalizada").sort((a, b) => a.data.localeCompare(b.data)).at(-1)
         return ultima ? ultima.lista_divergencias.map((d) => ({ ...d, unidade_id: u, contagem_id: ultima.id })) : []
       }),
+      anterior: unidades.reduce((acc, u) => {
+        const [penultima] = db.contagens.filter((c) => c.unidade_id === u && c.situacao === "finalizada").sort((a, b) => b.data.localeCompare(a.data)).slice(1, 2)
+        if (!penultima) return acc
+        const abaixo = penultima.itens.filter((i) => i.quantidade !== null && i.quantidade < (db.produtos.find((p) => p.id === i.produto_id)?.minimos[u] ?? 0)).length
+        return { abaixo_minimo: acc.abaixo_minimo + abaixo, divergencias: acc.divergencias + penultima.lista_divergencias.length }
+      }, { abaixo_minimo: 0, divergencias: 0 }),
       validade: db.lotes.filter((l) => unidades.includes(l.unidade_id))
         .map((l) => ({ ...l, dias: Math.round((new Date(`${l.validade}T12:00:00`).getTime() - new Date(`${hoje}T12:00:00`).getTime()) / 86_400_000) }))
         .filter((l) => l.dias <= 30).sort((a, b) => a.dias - b.dias),

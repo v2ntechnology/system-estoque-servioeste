@@ -10,7 +10,7 @@ export function ErrorPage() {
     <div className="grid h-dvh place-items-center bg-background p-4">
       <div className="text-center">
         <ErroCarga mensagem={mensagem} />
-        <Link to="/" className="text-sm text-brand underline-offset-4 hover:underline">Voltar ao painel</Link>
+        <Link to="/" className="text-sm underline-offset-4 hover:text-brand hover:underline">Voltar ao painel</Link>
       </div>
     </div>
   )

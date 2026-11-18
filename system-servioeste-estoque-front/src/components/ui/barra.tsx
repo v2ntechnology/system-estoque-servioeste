@@ -6,7 +6,7 @@ export function Barra({ feitos, total, className }: { feitos: number; total: num
   return (
     <div className={cn("flex items-center gap-2", className)}>
       <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={p} aria-valuemin={0} aria-valuemax={100}>
-        <div className="h-full rounded-full bg-brand transition-all" style={{ width: `${p}%` }} />
+        <div className="h-full rounded-full bg-foreground/70 transition-all" style={{ width: `${p}%` }} />
       </div>
       <span className="w-20 text-right text-xs tabular-nums text-muted-foreground">{feitos}/{total} · {p}%</span>
     </div>

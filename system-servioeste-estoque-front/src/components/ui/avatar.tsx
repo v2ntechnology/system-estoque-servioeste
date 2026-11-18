@@ -8,7 +8,7 @@ export function Avatar({ name, src, className }: { name: string; src?: string | 
   }
   return (
     <span aria-hidden
-      className={cn("grid size-9 shrink-0 place-items-center rounded-full border border-brand/30 bg-brand/10 text-xs font-medium text-brand", className)}>
+      className={cn("grid size-9 shrink-0 place-items-center rounded-full border bg-muted text-xs font-medium text-foreground", className)}>
       {initials(name)}
     </span>
   )

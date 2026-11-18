@@ -1,11 +1,10 @@
-import { ArrowDownLeft, ArrowLeftRight, ArrowUpRight, Plus } from "lucide-react"
+import { ArrowLeftRight, Plus } from "lucide-react"
 import { useState } from "react"
 import { Link } from "react-router-dom"
 
 import { Campo } from "@/components/form/Campo"
 import { AppShell } from "@/components/layout/AppShell"
 import { Cabecalho } from "@/components/layout/Cabecalho"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
 import { Carregando, ErroCarga, Vazio } from "@/components/ui/estados"
@@ -15,10 +14,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/components/ui/toast"
+import { QtdMovimento, SeloMovimento } from "@/components/ui/movimento"
 import { useMapaProdutos } from "@/features/catalogo/api"
 import { useMovimentacoes, useRegistrarMovimentacao } from "@/features/movimentacoes/api"
 import { useNomeUnidade, usePode, useUnidades } from "@/features/sessao/api"
-import { dataHora, lerQuantidade, numero } from "@/lib/format"
+import { dataHora, lerQuantidade } from "@/lib/format"
 import type { TipoMovimentacao } from "@/lib/tipos"
 import { useUnidadeAtiva } from "@/lib/unidade"
 
@@ -60,19 +60,17 @@ export function MovimentacoesPage() {
                     <TableRow key={m.id}>
                       <TableCell className="whitespace-nowrap tabular-nums text-muted-foreground">{dataHora(m.data)}</TableCell>
                       <TableCell>
-                        {m.tipo === "entrada"
-                          ? <Badge variant="brand"><ArrowDownLeft className="size-3" /> Entrada</Badge>
-                          : <Badge><ArrowUpRight className="size-3" /> Saída</Badge>}
+                        <SeloMovimento tipo={m.tipo} />
                       </TableCell>
                       <TableCell className="min-w-48">
                         <Link to={`/catalogo/${m.produto_id}`} className="hover:underline">{mapa.get(m.produto_id)?.nome ?? "…"}</Link>
                         {m.observacao && <span className="block text-xs text-muted-foreground">{m.observacao}</span>}
                       </TableCell>
                       {!unidade && <TableCell>{nomeUnidade(m.unidade_id)}</TableCell>}
-                      <TableCell className="text-right tabular-nums">{m.tipo === "entrada" ? "+" : "−"}{numero(m.quantidade)} {mapa.get(m.produto_id)?.medida}</TableCell>
+                      <TableCell className="text-right tabular-nums"><QtdMovimento tipo={m.tipo} quantidade={m.quantidade} sufixo={mapa.get(m.produto_id)?.medida} /></TableCell>
                       <TableCell>
                         {m.origem === "cotacao" && m.referencia
-                          ? <Link to={`/cotacoes/${m.referencia}`} className="text-brand hover:underline">{ORIGEM.cotacao}</Link> : ORIGEM[m.origem]}
+                          ? <Link to={`/cotacoes/${m.referencia}`} className="text-foreground underline-offset-4 hover:text-brand hover:underline">{ORIGEM.cotacao}</Link> : ORIGEM[m.origem]}
                       </TableCell>
                       <TableCell className="whitespace-nowrap text-muted-foreground">{m.autor}</TableCell>
                     </TableRow>

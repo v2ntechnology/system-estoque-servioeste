@@ -75,3 +75,16 @@ describe("fila da contagem no aparelho", () => {
     expect(minutosAte("16:30", agora)).toBe(-25)
   })
 })
+
+describe("situação do estoque no catálogo (spec 002)", async () => {
+  const { situacao, nivel } = await import("@/features/catalogo/util")
+  it("abaixo do mínimo é crítica, até 1,5× é atenção, acima é boa", () => {
+    expect(situacao(5, 10)).toBe("critica")
+    expect(situacao(10, 10)).toBe("atencao")
+    expect(situacao(15, 10)).toBe("boa")
+  })
+  it("sem contagem não tem situação nem medidor aceso", () => {
+    expect(situacao(null, 10)).toBe("nao_contado")
+    expect(nivel(null, 10)).toBe(0)
+  })
+})

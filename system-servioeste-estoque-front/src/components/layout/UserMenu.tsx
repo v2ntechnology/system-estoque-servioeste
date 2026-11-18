@@ -1,11 +1,13 @@
-import { ArrowLeftToLine, FlaskConical, Menu, Monitor, Moon, Sun } from "lucide-react"
+import { ArrowLeftToLine, ChevronsUpDown, Monitor, Moon, Sun } from "lucide-react"
 import { lazy, Suspense, useEffect, useId, useRef, useState } from "react"
-import { Link } from "react-router-dom"
 
+import { Avatar } from "@/components/ui/avatar"
 import { useEu } from "@/features/sessao/api"
 import { papeisPorExtenso } from "@/lib/papeis"
 import { useTheme } from "@/lib/theme"
 import { cn } from "@/lib/utils"
+
+import { HUB } from "./apps"
 
 const TEMAS = [
   { value: "light", label: "Claro", icon: Sun },
@@ -16,12 +18,10 @@ const TEMAS = [
 /** Opções da demonstração (trocar pessoa, simular sem conexão...). Só existe com os dados simulados ligados. */
 const DemoMenu = import.meta.env.DEV && import.meta.env.VITE_MOCK === "true" ? lazy(() => import("@/mocks/DemoMenu")) : null
 
-/** Endereço do Hub (o login e a saída são dele: constituição, núcleo IV). */
-const HUB_URL = import.meta.env.VITE_HUB_URL ?? "/"
 
 const itemClass = "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors hover:bg-accent"
 
-/** Menu hambúrguer da barra do topo (padrão do Hub): tema, área do dev e volta ao Hub. */
+/** Pessoa no pé da sidebar; abre para cima com tema, demonstração e volta ao Hub (o login e a saída são do Hub). */
 export function UserMenu() {
   const [aberto, setAberto] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -47,23 +47,23 @@ export function UserMenu() {
 
   return (
     <div ref={ref} className="relative">
-      <button type="button" aria-label="Menu" aria-expanded={aberto} aria-controls={menuId} onClick={() => setAberto((v) => !v)}
-        className={cn("grid size-9 place-items-center rounded-full border transition-colors hover:bg-accent", aberto && "bg-accent")}>
-        <Menu className="size-4" />
+      <button type="button" aria-label="Menu da pessoa" aria-expanded={aberto} aria-controls={menuId} onClick={() => setAberto((v) => !v)}
+        className={cn("flex w-full items-center gap-3 rounded-xl p-2 text-left transition-colors hover:bg-accent", aberto && "bg-accent")}>
+        <Avatar name={eu?.nome ?? ""} />
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-sm font-medium">{eu?.nome}</span>
+          <span className="block truncate text-xs text-muted-foreground">{eu ? papeisPorExtenso(eu) : ""}</span>
+        </span>
+        <ChevronsUpDown className="size-4 shrink-0 text-muted-foreground" />
       </button>
 
       {aberto && (
-        <div id={menuId} className="absolute right-0 top-full z-50 mt-2 w-64 rounded-xl border bg-popover p-1.5 shadow-lg">
+        <div id={menuId} className="absolute bottom-full left-0 z-50 mb-2 w-64 rounded-xl border bg-popover p-1.5 shadow-lg">
           {eu && (
             <div className="px-3 pb-2 pt-1.5">
               <p className="truncate text-sm font-medium">{eu.nome}</p>
               <p className="truncate text-xs text-muted-foreground">{eu.email} · {papeisPorExtenso(eu)}</p>
             </div>
-          )}
-          {import.meta.env.DEV && (
-            <Link to="/dev" className={itemClass} onClick={() => setAberto(false)}>
-              <FlaskConical className="size-4 text-brand" /> Área de desenvolvimento
-            </Link>
           )}
           {DemoMenu && <Suspense fallback={null}><DemoMenu aoMudar={() => setAberto(false)} /></Suspense>}
 
@@ -73,14 +73,14 @@ export function UserMenu() {
             {TEMAS.map(({ value, label, icon: Icon }) => (
               <button key={value} type="button" role="radio" aria-checked={theme === value} onClick={() => setTheme(value)}
                 className={cn("flex flex-col items-center gap-1 rounded-lg border py-2 text-xs transition-colors",
-                  theme === value ? "border-brand bg-brand text-brand-foreground" : "hover:bg-accent")}>
+                  theme === value ? "border-brand bg-brand/10 text-foreground" : "hover:bg-accent")}>
                 <Icon className="size-4" /> {label}
               </button>
             ))}
           </div>
 
           <div className="my-1.5 border-t" />
-          <a href={HUB_URL} className={itemClass}>
+          <a href={HUB.url} className={itemClass}>
             <ArrowLeftToLine className="size-4 text-muted-foreground" /> Voltar ao Hub
           </a>
         </div>

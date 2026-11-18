@@ -202,7 +202,7 @@ function Etapas({ atual }: { atual: Cotacao["status"] }) {
         <li key={s} className="flex shrink-0 items-center gap-2" aria-current={i === indice ? "step" : undefined}>
           {i > 0 && <span className={cn("h-px w-6 sm:w-10", i <= indice ? "bg-brand" : "bg-border")} />}
           <span className={cn("inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs",
-            i < indice && "border-brand/30 text-brand",
+            i < indice && "text-foreground",
             i === indice && "border-brand bg-brand font-medium text-brand-foreground",
             i > indice && "text-muted-foreground")}>
             {i < indice && <Check className="size-3" />} {STATUS_COTACAO[s].rotulo}

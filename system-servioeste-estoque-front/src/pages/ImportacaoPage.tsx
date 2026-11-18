@@ -89,16 +89,16 @@ function Previa({ previa, setPrevia, aoConcluir }: {
   return (
     <div className="space-y-4">
       <div className="rounded-2xl border bg-background p-4 text-sm">
-        <p className="flex items-center gap-2 font-medium"><FileSpreadsheet className="size-4 text-brand" /> {previa.arquivo}</p>
+        <p className="flex items-center gap-2 font-medium"><FileSpreadsheet className="size-4 text-muted-foreground" /> {previa.arquivo}</p>
         <p className="mt-1 text-muted-foreground">
           {NOME_TIPO[previa.tipo]} · {nomeUnidade(previa.unidade_id)} · responsável {previa.responsavel} · {dataBR(previa.data)}
         </p>
       </div>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Kpi rotulo="Ok" valor={contar("ok")} tom="brand" />
+        <Kpi rotulo="Ok" valor={contar("ok")} />
         <Kpi rotulo="Produtos novos" valor={contar("novo")} detalhe="serão criados no catálogo" />
-        <Kpi rotulo="A associar" valor={pendentes} tom={pendentes ? "warning" : undefined} detalhe="sem código na planilha" />
+        <Kpi rotulo="A associar" valor={pendentes} detalhe="sem código na planilha" />
         <Kpi rotulo="Com erro" valor={erros} detalhe="serão ignoradas" />
       </div>
 
@@ -155,7 +155,7 @@ function Previa({ previa, setPrevia, aoConcluir }: {
         <Button disabled={pendentes > 0 || confirmar.isPending} onClick={() => setConfirmando(true)}>
           <CheckCircle2 /> Confirmar importação
         </Button>
-        {pendentes > 0 && <p className="text-sm text-warning">Associe os {pendentes} produto(s) sem código para confirmar.</p>}
+        {pendentes > 0 && <p className="text-sm text-muted-foreground">Associe os {pendentes} produto(s) sem código para confirmar.</p>}
       </div>
 
       {confirmando && (

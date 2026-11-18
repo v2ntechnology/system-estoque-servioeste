@@ -1,4 +1,4 @@
-import { ChevronDown, type LucideIcon } from "lucide-react"
+import { ArrowDown, ArrowUp, ChevronDown, Minus, type LucideIcon } from "lucide-react"
 import { useState, type ReactNode } from "react"
 
 import { cn } from "@/lib/utils"
@@ -16,7 +16,7 @@ export function Card({ titulo, icone: Icone, acao, className, children }: {
       {(titulo || acao) && (
         <header className="mb-4 flex items-center justify-between gap-3">
           <h2 className="flex items-center gap-2 text-sm font-medium">
-            {Icone && <Icone className="size-4 shrink-0 text-brand" />} {titulo}
+            {Icone && <Icone className="size-4 shrink-0 text-muted-foreground" />} {titulo}
           </h2>
           {acao}
         </header>
@@ -26,27 +26,46 @@ export function Card({ titulo, icone: Icone, acao, className, children }: {
   )
 }
 
-/** Indicador numérico (rótulo, valor grande e detalhe). */
-export function Kpi({ rotulo, valor, detalhe, tom }: {
+/** Variação de um indicador: seta e texto em verde quando é boa notícia, vermelho quando é ruim. */
+export interface Tendencia {
+  texto: string
+  direcao: "sobe" | "desce" | "igual"
+  boa: boolean
+}
+
+/**
+ * Indicador numérico (referência da spec 002): rótulo, valor grande e uma linha de detalhe. O valor é sempre
+ * preto/branco; só a tendência usa verde ou vermelho, porque indica situação (princípio XI).
+ */
+export function Kpi({ rotulo, valor, detalhe, tendencia }: {
   rotulo: string
   valor: ReactNode
   detalhe?: ReactNode
-  tom?: "brand" | "warning"
+  tendencia?: Tendencia
 }) {
+  const Seta = tendencia?.direcao === "sobe" ? ArrowUp : tendencia?.direcao === "desce" ? ArrowDown : Minus
   return (
-    <div className="rounded-2xl border bg-background p-4">
-      <p className="text-xs uppercase tracking-wide text-muted-foreground">{rotulo}</p>
-      <p className={cn("mt-1 text-2xl font-medium tabular-nums tracking-tight",
-        tom === "brand" && "text-brand", tom === "warning" && "text-warning")}>{valor}</p>
-      {detalhe && <p className="mt-0.5 text-xs text-muted-foreground">{detalhe}</p>}
+    <div className="rounded-2xl border bg-background p-4 sm:p-5">
+      <p className="text-sm text-muted-foreground">{rotulo}</p>
+      <p className="mt-2 text-3xl tabular-nums tracking-tight">{valor}</p>
+      <p className="mt-1 flex flex-wrap items-center gap-x-1.5 text-xs text-muted-foreground">
+        {tendencia && (
+          <span className={cn("inline-flex items-center gap-0.5 font-medium",
+            tendencia.direcao === "igual" ? "text-muted-foreground" : tendencia.boa ? "text-brand" : "text-destructive")}>
+            <Seta className="size-3" /> {tendencia.texto}
+          </span>
+        )}
+        {detalhe}
+      </p>
     </div>
   )
 }
 
 const FAIXA = {
-  brand: "border-brand/30 bg-brand/10 [&>svg]:text-brand",
-  warning: "border-warning/30 bg-warning/10 [&>svg]:text-warning",
-  destructive: "border-destructive/30 bg-destructive/10 [&>svg]:text-destructive",
+  // Faixas neutras: só o ícone indica a situação (princípio XI); erro com borda vermelha suave.
+  brand: "bg-background [&>svg]:text-brand",
+  warning: "bg-background [&>svg]:text-warning",
+  destructive: "border-destructive/40 bg-background [&>svg]:text-destructive",
   default: "bg-muted/50 [&>svg]:text-muted-foreground",
 }
 

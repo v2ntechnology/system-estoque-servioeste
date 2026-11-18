@@ -232,6 +232,8 @@ export interface Painel {
   cotacoes_abertas: CotacaoResumo[]
   divergencias: (Divergencia & { unidade_id: string; contagem_id: string })[]
   validade: (Lote & { produto_id: string; dias: number })[]
+  /** Itens abaixo do mínimo e divergências na contagem anterior à última, para mostrar a tendência. */
+  anterior: { abaixo_minimo: number; divergencias: number }
 }
 
 export interface LinhaRelatorio {

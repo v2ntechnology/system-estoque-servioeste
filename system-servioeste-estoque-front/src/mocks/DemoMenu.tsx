@@ -32,12 +32,12 @@ export default function DemoMenu({ aoMudar }: { aoMudar: () => void }) {
         </button>
       ))}
       <label className={cn(item, "cursor-pointer")}>
-        <WifiOff className="size-4 text-warning" />
+        <WifiOff className="size-4 text-muted-foreground" />
         <span className="flex-1">Simular sem conexão</span>
         <input type="checkbox" className="accent-[var(--brand)]" checked={estado.semConexao} onChange={(e) => atualizar({ semConexao: e.target.checked })} />
       </label>
       <label className={cn(item, "cursor-pointer")}>
-        <AlarmClock className="size-4 text-warning" />
+        <AlarmClock className="size-4 text-muted-foreground" />
         <span className="flex-1">Simular fim do expediente</span>
         <input type="checkbox" className="accent-[var(--brand)]" checked={estado.fimExpediente} onChange={(e) => atualizar({ fimExpediente: e.target.checked })} />
       </label>

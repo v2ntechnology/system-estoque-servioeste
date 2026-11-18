@@ -7,10 +7,11 @@ const badgeVariants = cva("inline-flex items-center gap-1 whitespace-nowrap roun
   variants: {
     variant: {
       default: "border-transparent bg-muted text-muted-foreground",
-      brand: "border-brand/30 bg-brand/10 text-brand",
-      outline: "text-foreground",
-      destructive: "border-destructive/30 bg-destructive/10 text-destructive",
-      warning: "border-warning/30 bg-warning/10 text-warning",
+      outline: "bg-background text-foreground",
+      // Selos de situação: neutros, só o ponto tem cor (princípio XI).
+      brand: "bg-background text-foreground before:size-1.5 before:rounded-full before:bg-brand before:content-['']",
+      warning: "bg-background text-foreground before:size-1.5 before:rounded-full before:bg-warning before:content-['']",
+      destructive: "bg-background text-foreground before:size-1.5 before:rounded-full before:bg-destructive before:content-['']",
     },
   },
   defaultVariants: { variant: "default" },

@@ -1,5 +1,5 @@
 import {
-  AlarmClock, AlertTriangle, Camera, CheckCircle2, ClipboardCheck, CloudOff, Loader2, MessageSquare, Search, X,
+  AlarmClock, AlertTriangle, Camera, Check, CheckCircle2, ClipboardCheck, CloudOff, Loader2, MessageSquare, Plus, Search, X,
 } from "lucide-react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
@@ -18,6 +18,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/components/ui/toast"
+import { QtdMovimento } from "@/components/ui/movimento"
 import { useMapaProdutos } from "@/features/catalogo/api"
 import { enviarItens, useContagem, useFinalizarContagem } from "@/features/contagens/api"
 import { adicionar, aplicarFila, confirmarEnvio, lerFila, minutosAte } from "@/features/contagens/fila"
@@ -154,8 +155,14 @@ function ContagemAberta({ contagem }: { contagem: Contagem }) {
           </Faixa>
         )}
 
-        <div className="sticky top-0 z-10 -mx-3 space-y-2 bg-card/95 px-3 py-2 backdrop-blur sm:mx-0 sm:px-0">
-          <Barra feitos={contados} total={itens.length} />
+        <div className="sticky top-0 z-10 -mx-3 space-y-3 bg-card/95 px-3 pb-3 pt-1 backdrop-blur sm:mx-0 sm:px-0">
+          <div className="flex items-end justify-between gap-3">
+            <p className="text-2xl tabular-nums tracking-tight">{contados} <span className="text-base text-muted-foreground">de {itens.length} contados</span></p>
+            <p className="text-sm tabular-nums text-muted-foreground">{itens.length ? Math.round((contados / itens.length) * 100) : 0}%</p>
+          </div>
+          <div className="h-1.5 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={contados} aria-valuemax={itens.length} aria-label="Itens contados">
+            <div className="h-full rounded-full bg-foreground/70 transition-all" style={{ width: `${itens.length ? (contados / itens.length) * 100 : 0}%` }} />
+          </div>
           <div className="flex gap-2">
             <div className="relative flex-1">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -165,16 +172,33 @@ function ContagemAberta({ contagem }: { contagem: Contagem }) {
               Faltam {faltam}
             </Button>
           </div>
-          <Tabs value={categoria} onChange={setCategoria}
-            abas={[{ value: "todas", label: "Todas" }, ...categorias.map((c) => ({ value: c.id, label: c.nome }))]} />
+          <Tabs value={categoria} onChange={setCategoria} abas={[
+            { value: "todas", label: "Todas", count: faltam },
+            ...categorias.map((c) => ({ value: c.id, label: c.nome, count: itens.filter((i) => mapa.get(i.produto_id)?.categoria_id === c.id && i.quantidade === null).length })),
+          ]} />
         </div>
 
         {visiveis.length === 0 ? <Vazio icone={Search} titulo={soFaltam ? "Tudo contado neste filtro" : "Nenhum produto encontrado"} /> : (
-          <ul className="space-y-2">
-            {visiveis.map((i) => (
-              <LinhaContagem key={i.produto_id} item={i} produto={mapa.get(i.produto_id)!} desabilitado={!podeContar} onAlterar={alterar} />
-            ))}
-          </ul>
+          <div className="space-y-4">
+            {categorias.map((cat) => {
+              const doGrupo = visiveis.filter((i) => mapa.get(i.produto_id)?.categoria_id === cat.id)
+              if (!doGrupo.length) return null
+              const todosDoGrupo = itens.filter((i) => mapa.get(i.produto_id)?.categoria_id === cat.id)
+              return (
+                <section key={cat.id} aria-label={cat.nome} className="rounded-2xl border bg-background">
+                  <h2 className="flex items-center justify-between px-4 pb-1 pt-3 text-sm">
+                    {cat.nome}
+                    <span className="text-xs tabular-nums text-muted-foreground">{todosDoGrupo.filter((i) => i.quantidade !== null).length}/{todosDoGrupo.length}</span>
+                  </h2>
+                  <ul className="divide-y divide-border/60">
+                    {doGrupo.map((i) => (
+                      <LinhaContagem key={i.produto_id} item={i} produto={mapa.get(i.produto_id)!} desabilitado={!podeContar} onAlterar={alterar} />
+                    ))}
+                  </ul>
+                </section>
+              )
+            })}
+          </div>
         )}
       </div>
 
@@ -202,6 +226,10 @@ function StatusEnvio({ envio, pendentes }: { envio: Envio; pendentes: number }) 
   return <Badge variant="brand"><CheckCircle2 className="size-3" /> Tudo salvo</Badge>
 }
 
+/**
+ * Uma linha da contagem, pensada para o polegar: nome à esquerda, quantidade com − e + à direita, e atalhos de
+ * embalagem, observação e foto embaixo. Vazio continua "não contado" (princípio VIII).
+ */
 function LinhaContagem({ item, produto, desabilitado, onAlterar }: {
   item: ItemContagem
   produto: Produto
@@ -212,6 +240,7 @@ function LinhaContagem({ item, produto, desabilitado, onAlterar }: {
   const [invalido, setInvalido] = useState(false)
   const [obsAberta, setObsAberta] = useState(!!item.observacao)
   const foto = useRef<HTMLInputElement>(null)
+  const contado = item.quantidade !== null
 
   function mudar(v: string) {
     setTexto(v)
@@ -220,49 +249,60 @@ function LinhaContagem({ item, produto, desabilitado, onAlterar }: {
     // Vazio vira null ("não contado"), nunca zero (constituição, princípio VIII).
     if (q !== undefined) onAlterar({ produto_id: item.produto_id, quantidade: q })
   }
-
-  const somarEmbalagem = () => {
-    if (!produto.embalagem) return
-    mudar(String((lerQuantidade(texto) ?? 0) + produto.embalagem.quantidade).replace(".", ","))
+  const somar = (n: number) => {
+    const atual = lerQuantidade(texto)
+    if (atual === undefined || (atual === null && n < 0)) return
+    mudar(String(Math.max(0, (atual ?? 0) + n)).replace(".", ","))
   }
+  const passo = "grid size-11 place-items-center rounded-lg border text-lg hover:bg-accent disabled:opacity-40"
+  const atalho = "inline-flex h-8 items-center gap-1.5 rounded-lg px-2 text-xs text-muted-foreground hover:bg-accent hover:text-foreground"
 
   return (
-    <li className={cn("rounded-2xl border bg-background p-3", item.quantidade === null ? "" : "border-brand/40")}>
-      <div className="flex items-start gap-3">
+    <li className="px-3 py-3 sm:px-4">
+      <div className="flex items-center gap-3">
+        <span aria-hidden className={cn("grid size-6 shrink-0 place-items-center rounded-full border",
+          contado && "border-brand bg-brand/15 text-brand")}>
+          {contado && <Check className="size-3.5" />}
+        </span>
         <div className="min-w-0 flex-1">
-          <p className="font-medium leading-snug">{produto.nome}</p>
+          <p className="leading-snug">{produto.nome}</p>
           <p className="text-xs text-muted-foreground">
             {produto.codigo} · {produto.medida}
-            {produto.embalagem && <> · 1 {produto.embalagem.nome} = {produto.embalagem.quantidade} {produto.medida}</>}
+            {produto.embalagem && <> · 1 {produto.embalagem.nome} = {produto.embalagem.quantidade}</>}
           </p>
         </div>
-        <div className="w-28 shrink-0">
+        <div className="flex shrink-0 items-center gap-1.5">
+          <button type="button" className={cn(passo, "hidden sm:grid")} onClick={() => somar(-1)} disabled={desabilitado || !contado} aria-label={`Menos 1 de ${produto.nome}`}>−</button>
           <Input inputMode="decimal" enterKeyHint="next" value={texto} disabled={desabilitado}
-            onChange={(e) => mudar(e.target.value)} placeholder="Não contado" aria-label={`Quantidade de ${produto.nome}`}
-            aria-invalid={invalido} className={cn("h-12 text-right text-lg tabular-nums placeholder:text-xs", invalido && "border-destructive")} />
+            onChange={(e) => mudar(e.target.value)} placeholder="—" aria-label={`Quantidade de ${produto.nome}`}
+            aria-invalid={invalido} className={cn("h-11 w-20 text-center text-lg tabular-nums", invalido && "border-destructive")} />
+          <button type="button" className={passo} onClick={() => somar(1)} disabled={desabilitado} aria-label={`Mais 1 de ${produto.nome}`}>+</button>
         </div>
       </div>
       {invalido && <p role="alert" className="mt-1 text-right text-xs text-destructive">Use só números (ex.: 12 ou 1,5).</p>}
-      <div className="mt-2 flex flex-wrap items-center gap-1.5">
+
+      <div className="mt-1.5 flex flex-wrap items-center gap-1 pl-9">
         {produto.embalagem && !desabilitado && (
-          <Button size="sm" variant="ghost" onClick={somarEmbalagem}>+1 {produto.embalagem.nome}</Button>
+          <button type="button" className={atalho} onClick={() => somar(produto.embalagem!.quantidade)}>
+            <Plus className="size-3.5" /> 1 {produto.embalagem.nome}
+          </button>
         )}
-        {!desabilitado && texto !== "" && (
-          <Button size="sm" variant="ghost" onClick={() => mudar("")}><X /> Limpar</Button>
-        )}
-        <span className="flex-1" />
-        <Button size="sm" variant={obsAberta ? "outline" : "ghost"} onClick={() => setObsAberta((v) => !v)} disabled={desabilitado && !item.observacao}>
-          <MessageSquare /> Obs.
-        </Button>
-        <Button size="sm" variant={item.foto ? "outline" : "ghost"} onClick={() => foto.current?.click()} disabled={desabilitado}>
-          <Camera /> {item.foto ? "Trocar foto" : "Foto"}
-        </Button>
+        <button type="button" className={cn(atalho, (obsAberta || item.observacao) && "text-foreground")}
+          onClick={() => setObsAberta((v) => !v)} disabled={desabilitado && !item.observacao}>
+          <MessageSquare className="size-3.5" /> {item.observacao ? "Observação" : "Obs."}
+        </button>
+        <button type="button" className={cn(atalho, item.foto && "text-foreground")} onClick={() => foto.current?.click()} disabled={desabilitado}>
+          <Camera className="size-3.5" /> {item.foto ? "Trocar foto" : "Foto"}
+        </button>
         <input ref={foto} type="file" accept="image/*" capture="environment" hidden
           onChange={(e) => { const f = e.target.files?.[0]; if (f) onAlterar({ produto_id: item.produto_id, foto: f.name }) }} />
+        {!desabilitado && texto !== "" && (
+          <button type="button" className={cn(atalho, "ml-auto")} onClick={() => mudar("")}><X className="size-3.5" /> Limpar</button>
+        )}
       </div>
-      {item.foto && <p className="mt-1 truncate text-xs text-muted-foreground"><Camera className="mr-1 inline size-3" />{item.foto}</p>}
+      {item.foto && <p className="mt-1 truncate pl-9 text-xs text-muted-foreground"><Camera className="mr-1 inline size-3" />{item.foto}</p>}
       {obsAberta && (
-        <Textarea className="mt-2" rows={2} defaultValue={item.observacao} disabled={desabilitado} placeholder="Ex.: 2 caixas amassadas"
+        <Textarea className="mt-2 ml-9 w-[calc(100%-2.25rem)]" rows={2} defaultValue={item.observacao} disabled={desabilitado} placeholder="Ex.: 2 caixas amassadas"
           aria-label={`Observação de ${produto.nome}`} onBlur={(e) => e.target.value !== item.observacao && onAlterar({ produto_id: item.produto_id, observacao: e.target.value })} />
       )}
     </li>
@@ -287,7 +327,7 @@ function ContagemFinalizada({ contagem }: { contagem: Contagem }) {
       <div className="space-y-4 p-5 sm:p-6">
         <Barra feitos={contagem.contados} total={contagem.total} />
         {contagem.lista_divergencias.length > 0 ? (
-          <section className="space-y-2 rounded-2xl border border-warning/40 bg-background p-4">
+          <section className="space-y-2 rounded-2xl border bg-background p-4">
             <h2 className="flex items-center gap-2 text-sm font-medium"><AlertTriangle className="size-4 text-warning" /> Divergências para conferir</h2>
             <p className="text-xs text-muted-foreground">Queda maior que a explicada pelas saídas registradas desde a contagem anterior.</p>
             <div className="overflow-x-auto">
@@ -303,10 +343,10 @@ function ContagemFinalizada({ contagem }: { contagem: Contagem }) {
                     <TableRow key={d.produto_id}>
                       <TableCell><Link to={`/catalogo/${d.produto_id}`} className="hover:underline">{nome(d.produto_id)}</Link></TableCell>
                       <TableCell className="text-right tabular-nums">{numero(d.anterior)}</TableCell>
-                      <TableCell className="text-right tabular-nums">+{numero(d.entradas)}</TableCell>
-                      <TableCell className="text-right tabular-nums">−{numero(d.saidas)}</TableCell>
+                      <TableCell className="text-right"><QtdMovimento tipo="entrada" quantidade={d.entradas} /></TableCell>
+                      <TableCell className="text-right"><QtdMovimento tipo="saida" quantidade={d.saidas} /></TableCell>
                       <TableCell className="text-right tabular-nums">{numero(d.esperado)}</TableCell>
-                      <TableCell className="text-right font-medium tabular-nums text-warning">{numero(d.contado)}</TableCell>
+                      <TableCell className="text-right font-medium tabular-nums">{numero(d.contado)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

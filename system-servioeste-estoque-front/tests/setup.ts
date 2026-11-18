@@ -28,3 +28,15 @@ class Armazenamento implements Storage {
 }
 Object.defineProperty(globalThis, "localStorage", { configurable: true, value: new Armazenamento() })
 Object.defineProperty(window, "localStorage", { configurable: true, value: globalThis.localStorage })
+
+// O react-router cria um Request com o AbortSignal do jsdom ao mudar a URL, e o Request do Node recusa esse sinal.
+// Nos testes não há loaders para cancelar, então o sinal é descartado.
+const RequestNode = globalThis.Request
+globalThis.Request = class extends RequestNode {
+  constructor(input: RequestInfo | URL, init?: RequestInit) {
+    if (init?.signal) {
+      const { signal: _signal, ...resto } = init
+      super(input, resto)
+    } else super(input, init)
+  }
+} as typeof Request

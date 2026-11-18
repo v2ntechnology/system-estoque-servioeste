@@ -2,9 +2,9 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Tema minimalista: fundo branco no claro, preto no escuro. O verde Servioeste (#6ca33c) é a cor de
-   ação e destaque: botão principal, item ativo/selecionado, ícones de seção, foco e status "no ar". Sempre chapado,
-   nunca como brilho, degradê ou fundo de tela inteira. */
+/* Preto, branco e cinzas (constituição, princípio XI). O botão principal é preto (branco no escuro), como no Radar.
+   O verde Servioeste (#6ca33c, --brand) só marca selecionado, foco e hover. --warning e --destructive só indicam
+   situação (ponto do selo, medidor, ícone de alerta, erro) e gráficos: nunca fundo, valor ou botão amarelo. */
 :root {
   --background: #ffffff;
   --foreground: #0a0a0a;
@@ -12,8 +12,8 @@
   --card-foreground: #0a0a0a;
   --popover: #ffffff;
   --popover-foreground: #0a0a0a;
-  --primary: #6ca33c;
-  --primary-foreground: #0a0a0a;
+  --primary: #0a0a0a;
+  --primary-foreground: #fafafa;
   --secondary: #f4f4f5;
   --secondary-foreground: #18181b;
   --muted: #f4f4f5;
@@ -21,7 +21,7 @@
   --accent: #f4f4f5;
   --accent-foreground: #18181b;
   --destructive: #dc2626;
-  --warning: #b45309;
+  --warning: #d97706;
   --border: #e4e4e7;
   --input: #e4e4e7;
   --ring: #6ca33c;
@@ -37,7 +37,7 @@
   --card-foreground: #fafafa;
   --popover: #111111;
   --popover-foreground: #fafafa;
-  --primary: #7fb84e;
+  --primary: #fafafa;
   --primary-foreground: #0a0a0a;
   --secondary: #1a1a1a;
   --secondary-foreground: #fafafa;
@@ -98,8 +98,18 @@
   }
 }
 
-/* Rolagem sem barra visível (os painéis continuam rolando com a roda do mouse, o toque e o teclado).
-   Seletores simples e fora das camadas do Tailwind: a versão aninhada não era aplicada no modo dev. */
+/* Nunca mostrar barra de rolagem, em lugar nenhum (constituição, princípio XI). Tudo continua rolando com a roda do
+   mouse, o toque e o teclado. `.no-scrollbar` fica por compatibilidade com os componentes copiados. Seletores simples e
+   fora das camadas do Tailwind: a versão aninhada não era aplicada no modo dev. */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
 .no-scrollbar {
   scrollbar-width: none;
 }
