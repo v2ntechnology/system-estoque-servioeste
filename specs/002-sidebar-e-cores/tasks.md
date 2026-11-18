@@ -27,6 +27,7 @@
 - [X] T016 Histórico de contagens em linhas leves, agrupado por mês; barra de progresso neutra
 - [X] T017 Entrada verde e saída vermelha em todas as telas (`components/ui/movimento.tsx`)
 - [X] T018 Produto: resumo com situação e cobertura, estoque por unidade em listinha com mínimo editável no lápis
+- [X] T020 Painel: contagens, divergências e cotações em listinha; validade vazia vira uma linha discreta
 - [X] T019 Contagem: lista compacta agrupada por categoria, botões − e +, atalhos de embalagem, observação e foto
 
 ## Fase 4 — Verificação

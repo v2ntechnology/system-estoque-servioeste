@@ -24,6 +24,8 @@ Registro diário do que foi adicionado, alterado e removido no projeto. A entrad
   mínimo com cobertura e falta.
 - Histórico de contagens mais leve, agrupado por mês; detalhe do produto com resumo, cobertura em dias e mínimo
   editável pelo lápis; contagem em lista compacta agrupada por categoria.
+- Painel: contagens com um só indicador por unidade e o progresso da contagem aberta; divergências com esperado →
+  contado e quanto sumiu; cotações com as quatro etapas em tracinhos; lotes sem vencimento próximo viram uma linha.
 
 ## 2026-11-17
 

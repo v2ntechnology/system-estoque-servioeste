@@ -5,7 +5,7 @@ import type { TipoMovimentacao } from "@/lib/tipos"
 import { cn } from "@/lib/utils"
 
 /** Cor de entrada (verde) e saída (vermelho), iguais em todo o sistema (constituição, princípio XI). */
-export const COR_MOVIMENTO: Record<TipoMovimentacao, string> = {
+const COR_MOVIMENTO: Record<TipoMovimentacao, string> = {
   entrada: "text-brand",
   saida: "text-destructive",
 }
