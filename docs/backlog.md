@@ -40,18 +40,21 @@ Legenda: [x] feito · [ ] a fazer. Itens marcados **Proposta** ainda não foram 
 - [x] Gráficos do histórico nos indicadores dos Relatórios (spec 003).
 - [ ] Gráficos nos indicadores do Painel (histórico de abaixo do mínimo e divergências por contagem).
 
-## Etapa 2 — Back-end (Proposta)
+## Etapa 2 — Back-end (specs 004 e 005)
 
 - [x] `system-servioeste-estoque-back`: FastAPI + PostgreSQL + Alembic com o contrato de `src/lib/tipos.ts` (spec 004).
 - [x] Identidade pelo contrato do Hub (`X-Hub-User-*`), perfil local com papéis e unidades.
 - [x] Regras com testes antes: saldo, divergência, consumo médio e confirmação da importação.
-- [ ] Testes de PDF e da leitura de planilhas (quando existirem).
+- [x] Testes da leitura de planilhas (`tests/test_planilha.py`).
+- [ ] Conferir a importação com uma planilha real da Servioeste.
 - [x] Auditoria na mesma transação; contagens e aprovações imutáveis.
-- [ ] Rodar com PostgreSQL no Docker e conferir as telas com `make front`.
-- [ ] Importação real das planilhas (pandas/openpyxl) e PDF real (WeasyPrint).
-- [ ] Fotos e anexos em pasta própria no servidor.
+- [x] Rodar com PostgreSQL no Docker (`make up`, `make seed`).
+- [ ] Conferir as telas no navegador e no celular com `make front` (ou `make front-rede`).
+- [x] Importação real das planilhas `.xlsx` (openpyxl), achando as colunas pelo nome.
+- [ ] PDF da cotação gerado no servidor (WeasyPrint) — próxima spec (006), com teste.
+- [x] Fotos e anexos em pasta própria no servidor (spec 005).
 - [ ] Tarefas agendadas (APScheduler): aviso de contagem, atrasos, validade, consumo, resumo semanal por e-mail.
-- [ ] Trocar os dados simulados pela API e remover o MSW do fluxo normal.
+- [x] `make front` usa a API; os simulados ficam só para a demonstração (`make front-mock`).
 
 ## Etapa 3 — Offline real e produção (Proposta)
 
