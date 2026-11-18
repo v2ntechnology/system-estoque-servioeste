@@ -61,3 +61,7 @@ Thumbs.db
 # ==== Claude Code local ====
 .claude/settings.local.json
 CLAUDE.md
+
+# ==== Banco local do api-local ====
+*.db
+*.db-journal

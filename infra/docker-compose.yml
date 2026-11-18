@@ -1,0 +1,42 @@
+# Ambiente de DESENVOLVIMENTO do Servioeste Estoque. Rode pela raiz do projeto com `make up`
+# (equivale a: docker compose -f infra/docker-compose.yml --env-file .env up -d --build).
+#
+# Todas as portas ficam presas em 127.0.0.1: só o seu computador acessa.
+# Portas (5435, 8004) não batem com Radar, Hub, Ponto e Resíduos: todos rodam juntos.
+# O front-end roda fora do Docker, com `make front` (Vite em http://localhost:5177).
+
+name: servioeste-estoque
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-estoque}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-estoque}
+      POSTGRES_DB: ${POSTGRES_DB:-estoque}
+    ports: ["127.0.0.1:${POSTGRES_PORT:-5435}:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-estoque}"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ../system-servioeste-estoque-back
+      args: { DEV: "true" }
+    env_file:
+      - path: ../.env
+        required: false
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-estoque}:${POSTGRES_PASSWORD:-estoque}@postgres:5432/${POSTGRES_DB:-estoque}
+      PYTHONPATH: /app    # usa o código montado (não a cópia instalada na imagem)
+    volumes:
+      - ../system-servioeste-estoque-back:/app   # código montado: o --reload pega as mudanças na hora
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    ports: ["127.0.0.1:${API_PORT:-8004}:8000"]
+    depends_on:
+      postgres: { condition: service_healthy }
+
+volumes:
+  pgdata:
