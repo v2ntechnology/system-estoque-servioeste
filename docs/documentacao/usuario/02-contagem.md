@@ -11,7 +11,9 @@ pelo almoxarifado.
 3. Digite a quantidade **na unidade de medida do produto**, ou use os botões **−** e **+** ao lado do campo. Quando
    o produto vem em embalagem (ex.: pacote com 8 rolos), o atalho **+ 1 pacote** soma a embalagem inteira. Os
    produtos aparecem agrupados por categoria, e um ✓ verde marca os que já foram contados.
-4. Se precisar, escreva uma **observação** (ex.: "2 caixas amassadas") ou tire uma **foto**.
+4. Se precisar, escreva uma **observação** (ex.: "2 caixas amassadas") ou tire uma **foto**. A foto é enviada na
+   hora e aparece em miniatura na linha; tocar nela abre a foto inteira. Ela também aparece na contagem finalizada.
+   A foto precisa de internet: sem sinal, o sistema avisa e você tira de novo depois (a quantidade não se perde).
 
 O botão **Faltam N** mostra só os produtos que ainda não foram contados.
 

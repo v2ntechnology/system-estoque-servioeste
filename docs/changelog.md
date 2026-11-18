@@ -10,6 +10,8 @@ Registro diário do que foi adicionado, alterado e removido no projeto. A entrad
   contagens, movimentações, painel, cotações, fornecedores, relatórios e gráficos, com identidade vinda do Hub,
   permissões por papel e unidade, auditoria, migração do banco e dados de exemplo (`make seed`).
 - Comandos para rodar a API no Docker (`make up`) ou sem Docker com SQLite (`make api-local`).
+- **Fotos e anexos guardados** (spec 005): a foto do item da contagem e a proposta, nota fiscal e boleto da cotação
+  ficam no servidor; a contagem mostra a miniatura e os anexos podem ser baixados.
 - **Importação de verdade**: a API lê a planilha `.xlsx` achando as colunas pelo nome, com unidade, responsável e
   data do cabeçalho; uma planilha de cotação vira uma cotação em rascunho com os preços.
 

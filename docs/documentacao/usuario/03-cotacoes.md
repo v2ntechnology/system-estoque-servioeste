@@ -33,6 +33,8 @@ A lista pode ser salva como **modelo** para a próxima vez.
 5. Quando o material chega, **Marcar como recebida** gera automaticamente a **entrada no estoque** da unidade.
    Anexe também a **nota fiscal** e o **boleto**.
 
+Os anexos ficam guardados no sistema e podem ser **baixados** pelo botão *Baixar* (fotos e PDF, até 10 MB).
+
 Todo passo aparece no **histórico** da cotação, com nome e data.
 
 ## Fornecedores

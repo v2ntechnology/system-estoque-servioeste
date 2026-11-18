@@ -48,7 +48,12 @@ Dar acesso: a pessoa abre o Estoque pelo Hub uma vez e depois
   confirmar); sem código, acha pelo nome sem acento ou fica "associar". Confirmar uma Declaração cria a contagem
   finalizada (fora da planilha = não contado); uma planilha de cotação cria a cotação em rascunho com os preços.
   O formato foi tirado da documentação técnica: conferir com uma planilha real da Servioeste.
-- Anexos de cotação: só o registro (nome, tipo, autor); guardar o arquivo no servidor tem spec própria.
+- **Fotos e anexos** (spec 005, `services/arquivos.py`, tabela `arquivos`): `POST /arquivos` (foto da contagem,
+  só imagem) e o anexo da cotação gravam em `ARQUIVOS_DIR` (padrão `arquivos/`, fora do git; no Docker, volume
+  `arquivos` em `/dados/arquivos`) com nome sorteado em pastas por mês. Tipo conferido pelos primeiros bytes (JPEG,
+  PNG, WebP, HEIC, PDF), até 10 MB (`ARQUIVO_MAX_BYTES`). `GET /arquivos/{id}` só para quem vê a unidade do arquivo
+  (senão 404); imagem em linha, PDF como download. O item da contagem guarda o id em `foto` e a resposta traz
+  `foto_url`; o anexo traz `url`. `salvar` faz flush: o anexo aponta para o arquivo e o Postgres confere a ordem.
 
 ## Comandos
 
@@ -62,6 +67,8 @@ make api-local      # sem Docker: API com SQLite em arquivo (estoque-dev.db), s�
 make seed-local     # dados de exemplo no SQLite do api-local
 make front          # telas ligadas à API (sem simulados)
 ```
+
+Testes: o SQLite dos testes liga `PRAGMA foreign_keys=ON` (como o Postgres) e grava os arquivos numa pasta temporária.
 
 Teste isolado: `cd system-servioeste-estoque-back && .venv/bin/pytest tests/test_contagens.py -k divergencia`.
 Migração nova: `DATABASE_URL=sqlite+aiosqlite:///./x.db .venv/bin/alembic revision --autogenerate --rev-id 0002 -m nome`,
