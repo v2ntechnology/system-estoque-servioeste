@@ -36,12 +36,6 @@ async def test_unidade_nao_liberada_e_recusada(client, como, cenario):
     assert r.status_code == 403
 
 
-async def test_envio_de_planilha_ainda_nao_disponivel(client, como, cenario):
-    r = await client.post("/api/v1/importacao/planilha", headers=como("admin"),
-                          files={"arquivo": ("declaracao.xlsx", b"x", "application/octet-stream")})
-    assert r.status_code == 501
-
-
 async def test_confirmar_previa_cria_contagem_sem_transformar_vazio_em_zero(client, como, cenario, sessionmaker):
     linhas = [
         {"linha": 6, "codigo": "LIM-001", "nome": "ALCOOL", "quantidade": 12, "medida": "UN", "observacao": "",

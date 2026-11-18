@@ -181,9 +181,20 @@ export const relatoriosHandlers = [
         situacao: "finalizada", itens, lista_divergencias: [], finalizada_em: agoraIso() })
       for (const i of itens) if (i.quantidade !== null) (db.saldos[previa.unidade_id] ??= {})[i.produto_id] = i.quantidade
     }
+    let cotacao_id: string | null = null
+    if (previa.tipo === "cotacao") {
+      cotacao_id = novoId("co")
+      const vistos = new Set<string>()
+      const itens = validas.filter((l) => l.quantidade && !vistos.has(l.produto_id!) && vistos.add(l.produto_id!))
+        .map((l) => ({ produto_id: l.produto_id!, quantidade: l.quantidade!, preco: l.valor ?? null }))
+      db.cotacoes.push({ id: cotacao_id, numero: Math.max(0, ...db.cotacoes.map((c) => c.numero)) + 1, titulo: `Importada de ${previa.arquivo}`,
+        unidade_id: previa.unidade_id, status: "rascunho", fornecedor_id: null, criada_em: agoraIso(), itens, anexos: [],
+        eventos: [{ data: agoraIso(), autor: eu.nome, descricao: `Criou a cotação a partir de ${previa.arquivo}` }],
+        aprovada_por: null, aprovada_em: null, observacao: "" })
+    }
     db.importacoes = db.importacoes.filter((p) => p.id !== previa.id)
     salvar()
-    const r: ResultadoImportacao = { produtos_criados, itens_importados: validas.length, ignorados: previa.linhas.length - validas.length, contagem_id }
+    const r: ResultadoImportacao = { produtos_criados, itens_importados: validas.length, ignorados: previa.linhas.length - validas.length, contagem_id, cotacao_id }
     return r
   }, { acao: "importacao.usar" })),
 ]

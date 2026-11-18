@@ -12,6 +12,7 @@ dependencies = [
     "pydantic>=2.9",
     "pydantic-settings>=2.6",
     "python-multipart>=0.0.12",  # envio de planilhas e anexos (FormData)
+    "openpyxl>=3.1",  # leitura das planilhas da Servioeste (.xlsx)
     "tzdata",  # fuso de Brasília (zoneinfo) mesmo em imagens sem a base de fusos do sistema
 ]
 

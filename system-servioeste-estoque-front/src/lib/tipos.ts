@@ -267,6 +267,8 @@ export interface LinhaImportacao {
   produto_id: string | null
   situacao: "ok" | "novo" | "associar" | "erro"
   erro: string | null
+  /** Valor unitário (planilha de cotação). */
+  valor?: number | null
 }
 
 export interface PreviaImportacao {
@@ -284,6 +286,8 @@ export interface ResultadoImportacao {
   itens_importados: number
   ignorados: number
   contagem_id: string | null
+  /** Planilha de cotação: a cotação criada em rascunho. */
+  cotacao_id: string | null
 }
 
 // ------------------------------------------------------------------ séries dos gráficos (spec 003)

@@ -193,6 +193,11 @@ export function ImportacaoPage() {
                 Ver a contagem importada
               </Link>
             )}
+            {resultado.cotacao_id && (
+              <Link to={`/cotacoes?cotacao=${resultado.cotacao_id}`} className="inline-flex h-10 items-center rounded-lg border px-4 text-sm font-medium hover:bg-accent">
+                Ver a cotação criada
+              </Link>
+            )}
           </div>
         ) : previa ? (
           <Previa previa={previa} setPrevia={setPrevia} aoConcluir={setResultado} />

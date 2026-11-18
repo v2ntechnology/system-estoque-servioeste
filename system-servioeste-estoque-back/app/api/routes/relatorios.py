@@ -4,14 +4,24 @@ import uuid
 from collections import defaultdict
 from datetime import date, datetime
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from app.api.deps import DB, EuAtual, exigir, uuid_ou_404
 from app.core.tempo import BRASILIA, agora, com_fuso, hoje
-from app.models import Contagem, Cotacao, Importacao, ItemContagem, ItemCotacao, Movimentacao, Produto, Saldo
-from app.services import auditoria
+from app.models import (
+    Contagem,
+    Cotacao,
+    EventoCotacao,
+    Importacao,
+    ItemContagem,
+    ItemCotacao,
+    Movimentacao,
+    Produto,
+    Saldo,
+)
+from app.services import auditoria, planilha
 
 router = APIRouter(prefix="/api/v1")
 
@@ -140,10 +150,36 @@ def view_previa(i: Importacao) -> dict:
 
 
 @router.post("/importacao/planilha", dependencies=[exigir("importacao.usar")])
-async def enviar_planilha() -> dict:
-    """A leitura real do .xlsx tem spec própria: o formato das planilhas da Servioeste ainda não foi conferido."""
-    raise HTTPException(501, "A leitura de planilhas ainda não está disponível nesta versão. "
-                             "Use a demonstração (dados simulados) para ver a pré-visualização.")
+async def enviar_planilha(eu: EuAtual, db: DB, arquivo: UploadFile = File(...),  # noqa: B008
+                          tipo: str = Form("declaracao_estoque"), unidade_id: str = Form("")) -> dict:
+    """Lê a planilha e devolve a pré-visualização. Nada vira dado antes de confirmar."""
+    if tipo not in ("declaracao_estoque", "cotacao"):
+        raise HTTPException(422, "Tipo de planilha inválido.")
+    if not (arquivo.filename or "").lower().endswith(".xlsx"):
+        raise HTTPException(422, "O arquivo precisa ser uma planilha do Excel (.xlsx). Planilhas .xls: abra no Excel "
+                                 "e use Salvar como > Pasta de Trabalho do Excel.")
+    u = await _unidade(eu, unidade_id)
+    try:
+        leitura = planilha.ler(await arquivo.read(), tipo)
+    except planilha.PlanilhaInvalida as e:
+        raise HTTPException(422, str(e)) from e
+
+    produtos = (await db.scalars(select(Produto))).all()
+    por_codigo = {p.codigo.strip().upper(): p for p in produtos}
+    por_nome = {planilha.normalizar(p.nome): p for p in produtos}
+    linhas = []
+    for x in leitura.linhas:
+        produto = por_codigo.get(x.codigo.strip().upper()) if x.codigo else por_nome.get(planilha.normalizar(x.nome))
+        situacao = "erro" if x.erro else "ok" if produto else "novo" if x.codigo else "associar"
+        linhas.append({"linha": x.linha, "codigo": x.codigo, "nome": x.nome, "quantidade": x.quantidade,
+                       "medida": x.medida or (produto.medida if produto else ""), "observacao": x.observacao,
+                       "valor": x.valor, "produto_id": str(produto.id) if produto and not x.erro else None,
+                       "situacao": situacao, "erro": x.erro})
+    previa = Importacao(arquivo=arquivo.filename or "planilha.xlsx", tipo=tipo, unidade_id=u, linhas=linhas,
+                        responsavel=leitura.responsavel or eu.nome, data=leitura.data or hoje())
+    db.add(previa)
+    await db.commit()
+    return view_previa(previa)
 
 
 async def _previa(db, id: str) -> Importacao:
@@ -213,9 +249,25 @@ async def confirmar(id: str, eu: EuAtual, db: DB) -> dict:
                 else:
                     saldo.quantidade = qtd
         contagem_id = str(c.id)
+    cotacao_id = None
+    if previa.tipo == "cotacao":
+        numero = (await db.scalar(select(func.max(Cotacao.numero))) or 0) + 1
+        cot = Cotacao(numero=numero, titulo=f"Importada de {previa.arquivo}", unidade_id=previa.unidade_id)
+        db.add(cot)
+        await db.flush()
+        vistos: set[str] = set()
+        for ordem, x in enumerate(x for x in validas if x["quantidade"]):
+            if x["produto_id"] in vistos:
+                continue
+            vistos.add(x["produto_id"])
+            db.add(ItemCotacao(cotacao_id=cot.id, produto_id=uuid.UUID(x["produto_id"]), ordem=ordem,
+                               quantidade=x["quantidade"], preco=x.get("valor")))
+        db.add(EventoCotacao(cotacao_id=cot.id, autor=eu.nome,
+                             descricao=f"Criou a cotação a partir de {previa.arquivo}"))
+        cotacao_id = str(cot.id)
     auditoria.registrar(db, eu, "importacao.confirmar", "importacao", previa.id, arquivo=previa.arquivo,
                         itens=len(validas), produtos_criados=produtos_criados)
     await db.delete(previa)
     await db.commit()
     return {"produtos_criados": produtos_criados, "itens_importados": len(validas),
-            "ignorados": len(linhas) - len(validas), "contagem_id": contagem_id}
+            "ignorados": len(linhas) - len(validas), "contagem_id": contagem_id, "cotacao_id": cotacao_id}
