@@ -285,3 +285,23 @@ export interface ResultadoImportacao {
   ignorados: number
   contagem_id: string | null
 }
+
+// ------------------------------------------------------------------ séries dos gráficos (spec 003)
+
+export type MetricaSerie = "entradas" | "saidas" | "gasto"
+export type EscalaSerie = "dia" | "mes"
+
+export interface PontoSerie {
+  /** "2026-11-05" (dia) ou "2026-11" (mês). */
+  periodo: string
+  valor: number
+}
+
+export interface SerieRelatorio {
+  metrica: MetricaSerie
+  escala: EscalaSerie
+  unidade_id: string
+  pontos: PontoSerie[]
+  /** Total do período por categoria do catálogo, do maior para o menor. */
+  por_categoria: { categoria_id: string; valor: number }[]
+}

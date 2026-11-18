@@ -114,3 +114,22 @@ describe("contagens com resumo ao lado (spec 002)", () => {
     expect((await within(painel).findAllByText(/Máscara PFF2|Álcool 70%/)).length).toBeGreaterThan(0)
   })
 })
+
+describe("gráfico dos indicadores (spec 003)", () => {
+  it("clicar em Saídas abre o histórico, com tabela, escala por mês e divisão por categoria", async () => {
+    renderizar("/relatorios")
+    const u = userEvent.setup()
+    await u.click(await screen.findByRole("button", { name: "Saídas: ver gráfico" }))
+    const janela = await screen.findByRole("dialog")
+    expect(await within(janela).findByRole("img", { name: /Saídas: gráfico de área/ })).toBeInTheDocument()
+    expect(within(janela).getByText(/Por categoria/)).toBeInTheDocument()
+    await u.click(within(janela).getByRole("radio", { name: "Colunas" }))
+    expect(within(janela).getByRole("img", { name: /gráfico de colunas/ })).toBeInTheDocument()
+    await u.click(within(janela).getByRole("radio", { name: "Tabela" }))
+    expect(within(janela).getByRole("columnheader", { name: "Saídas" })).toBeInTheDocument()
+    await u.click(within(janela).getByRole("tab", { name: "Por mês" }))
+    expect((await within(janela).findAllByText(/6 meses até/)).length).toBeGreaterThan(0)
+    await waitFor(() => expect(within(janela).getAllByRole("row").length).toBe(7)) // cabeçalho + 6 meses
+    expect(within(janela).queryByText(/Invalid Date/)).not.toBeInTheDocument()
+  })
+})

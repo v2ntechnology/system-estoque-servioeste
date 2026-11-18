@@ -1,7 +1,9 @@
 // Relatório mensal e importação de planilhas.
 import { http } from "msw"
 
-import type { LinhaImportacao, PreviaImportacao, RelatorioMensal, ResultadoImportacao, TipoPlanilha } from "@/lib/tipos"
+import type {
+  EscalaSerie, LinhaImportacao, MetricaSerie, PreviaImportacao, RelatorioMensal, ResultadoImportacao, SerieRelatorio, TipoPlanilha,
+} from "@/lib/tipos"
 
 import { agoraIso, db, novoId, salvar } from "../db"
 import { API, erro, podeVerUnidade, rota } from "../util"
@@ -52,7 +54,55 @@ function linhasDeExemplo(tipo: TipoPlanilha): LinhaImportacao[] {
   return [...comCodigo, ...extras]
 }
 
+const ultimoDia = (mes: string) => {
+  const [a, m] = mes.split("-").map(Number)
+  return new Date(Date.UTC(a, m, 0)).getUTCDate()
+}
+
+/** Série de entradas, saídas ou gasto por dia de um mês ou pelos 6 meses até ele (spec 003). */
+function serie(unidade: string, metrica: MetricaSerie, escala: EscalaSerie, mes: string): SerieRelatorio {
+  const hoje = new Date().toLocaleDateString("sv-SE", { timeZone: "America/Sao_Paulo" })
+  const periodos: string[] = []
+  if (escala === "dia") {
+    for (let d = 1; d <= ultimoDia(mes); d++) {
+      const dia = `${mes}-${String(d).padStart(2, "0")}`
+      if (dia > hoje) break
+      periodos.push(dia)
+    }
+  } else {
+    let atual = mes
+    for (let i = 0; i < 6; i++) { periodos.unshift(atual); atual = mesAnterior(atual) }
+  }
+  const tipo = metrica === "saidas" ? "saida" : "entrada"
+  const preco = (id: string) => db.produtos.find((p) => p.id === id)?.preco_ref ?? 0
+  const valor = (m: { quantidade: number; produto_id: string }) => (metrica === "gasto" ? m.quantidade * preco(m.produto_id) : m.quantidade)
+  const movs = db.movimentacoes.filter((m) => m.unidade_id === unidade && m.tipo === tipo)
+  const chave = (data: string) => (escala === "dia" ? data.slice(0, 10) : data.slice(0, 7))
+  const noPeriodo = movs.filter((m) => periodos.includes(chave(m.data)))
+  const arred = (v: number) => (metrica === "gasto" ? Math.round(v * 100) / 100 : v)
+  const porCategoria = new Map<string, number>()
+  for (const m of noPeriodo) {
+    const cat = db.produtos.find((p) => p.id === m.produto_id)?.categoria_id ?? "?"
+    porCategoria.set(cat, (porCategoria.get(cat) ?? 0) + valor(m))
+  }
+  return {
+    metrica, escala, unidade_id: unidade,
+    pontos: periodos.map((periodo) => ({ periodo, valor: arred(noPeriodo.filter((m) => chave(m.data) === periodo).reduce((s, m) => s + valor(m), 0)) })),
+    por_categoria: [...porCategoria.entries()].map(([categoria_id, v]) => ({ categoria_id, valor: arred(v) })).sort((a, b) => b.valor - a.valor),
+  }
+}
+
 export const relatoriosHandlers = [
+  http.get(`${API}/relatorios/serie`, rota(({ eu, url }) => {
+    const unidade = url.searchParams.get("unidade") ?? eu.unidades[0]
+    const metrica = (url.searchParams.get("metrica") ?? "saidas") as MetricaSerie
+    const escala = (url.searchParams.get("escala") ?? "dia") as EscalaSerie
+    const mes = url.searchParams.get("mes") ?? new Date().toISOString().slice(0, 7)
+    if (!podeVerUnidade(eu, unidade)) return erro(403, "Esta unidade não está liberada para você.")
+    if (!["entradas", "saidas", "gasto"].includes(metrica) || !["dia", "mes"].includes(escala)) return erro(422, "Métrica ou escala inválida.")
+    return serie(unidade, metrica, escala, mes)
+  })),
+
   http.get(`${API}/relatorios/mensal`, rota(({ eu, url }) => {
     const unidade = url.searchParams.get("unidade") ?? eu.unidades[0]
     const mes = url.searchParams.get("mes") ?? new Date().toISOString().slice(0, 7)

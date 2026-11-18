@@ -11,9 +11,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { QtdMovimento } from "@/components/ui/movimento"
 import { useMapaProdutos } from "@/features/catalogo/api"
 import { useRelatorioMensal } from "@/features/relatorios/api"
+import { GraficoDialog } from "@/features/relatorios/GraficoDialog"
 import { useNomeUnidade, useUnidades } from "@/features/sessao/api"
 import { hojeIso, mesPorExtenso, numero, reais } from "@/lib/format"
-import type { RelatorioMensal } from "@/lib/tipos"
+import type { MetricaSerie, RelatorioMensal } from "@/lib/tipos"
 import { useUnidadeAtiva } from "@/lib/unidade"
 import { cn } from "@/lib/utils"
 
@@ -75,6 +76,7 @@ export function RelatoriosPage() {
   const nomeProduto = (id: string) => mapa.get(id)?.nome ?? id
 
   const varGasto = r ? variacao(r.totais.gasto, r.totais.gasto_mes_anterior) : null
+  const [grafico, setGrafico] = useState<MetricaSerie | null>(null)
 
   return (
     <AppShell>
@@ -95,9 +97,9 @@ export function RelatoriosPage() {
           : (
             <>
               <div className="grid gap-3 sm:grid-cols-3">
-                <Kpi rotulo="Entradas" valor={numero(r.totais.entradas)} detalhe="itens recebidos no mês" />
-                <Kpi rotulo="Saídas" valor={numero(r.totais.saidas)} detalhe="itens consumidos no mês" />
-                <Kpi rotulo="Gasto" valor={reais(r.totais.gasto)}
+                <Kpi rotulo="Entradas" valor={numero(r.totais.entradas)} detalhe="itens recebidos no mês" onAbrir={() => setGrafico("entradas")} />
+                <Kpi rotulo="Saídas" valor={numero(r.totais.saidas)} detalhe="itens consumidos no mês" onAbrir={() => setGrafico("saidas")} />
+                <Kpi rotulo="Gasto" valor={reais(r.totais.gasto)} onAbrir={() => setGrafico("gasto")}
                   tendencia={varGasto === null ? undefined : { texto: `${varGasto > 0 ? "+" : ""}${varGasto}%`, direcao: varGasto > 0 ? "sobe" : varGasto < 0 ? "desce" : "igual", boa: varGasto <= 0 }}
                   detalhe={varGasto === null ? `mês anterior: ${reais(r.totais.gasto_mes_anterior)}` : "em relação ao mês anterior"} />
               </div>
@@ -135,6 +137,7 @@ export function RelatoriosPage() {
           <p>O resumo semanal por e-mail (itens abaixo do mínimo e cotações paradas) chega junto com o back-end.</p>
         </Faixa>
       </div>
+      {grafico && <GraficoDialog metrica={grafico} unidade={unidade} mes={mes} onFechar={() => setGrafico(null)} />}
     </AppShell>
   )
 }

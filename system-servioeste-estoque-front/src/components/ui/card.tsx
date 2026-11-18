@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowUp, ChevronDown, Minus, type LucideIcon } from "lucide-react"
+import { ArrowDown, ArrowUp, ChartLine, ChevronDown, Minus, type LucideIcon } from "lucide-react"
 import { useState, type ReactNode } from "react"
 
 import { cn } from "@/lib/utils"
@@ -37,15 +37,25 @@ export interface Tendencia {
  * Indicador numérico (referência da spec 002): rótulo, valor grande e uma linha de detalhe. O valor é sempre
  * preto/branco; só a tendência usa verde ou vermelho, porque indica situação (princípio XI).
  */
-export function Kpi({ rotulo, valor, detalhe, tendencia }: {
+export function Kpi({ rotulo, valor, detalhe, tendencia, onAbrir }: {
   rotulo: string
   valor: ReactNode
   detalhe?: ReactNode
   tendencia?: Tendencia
+  /** Com histórico: o cartão inteiro vira botão e abre o gráfico (spec 003). */
+  onAbrir?: () => void
 }) {
   const Seta = tendencia?.direcao === "sobe" ? ArrowUp : tendencia?.direcao === "desce" ? ArrowDown : Minus
+  const Raiz = onAbrir ? "button" : "div"
   return (
-    <div className="rounded-2xl border bg-background p-4 sm:p-5">
+    <Raiz {...(onAbrir ? { type: "button" as const, onClick: onAbrir, "aria-label": `${rotulo}: ver gráfico` } : {})}
+      className={cn("rounded-2xl border bg-background p-4 text-left sm:p-5",
+        onAbrir && "group relative w-full outline-none transition-colors hover:border-brand/50 focus-visible:ring-2 focus-visible:ring-brand/40")}>
+      {onAbrir && (
+        <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-lg border px-2 py-1 text-[11px] text-muted-foreground transition-colors group-hover:border-brand/50 group-hover:text-brand">
+          <ChartLine className="size-3.5" /> Gráfico
+        </span>
+      )}
       <p className="text-sm text-muted-foreground">{rotulo}</p>
       <p className="mt-2 text-3xl tabular-nums tracking-tight">{valor}</p>
       <p className="mt-1 flex flex-wrap items-center gap-x-1.5 text-xs text-muted-foreground">
@@ -57,7 +67,7 @@ export function Kpi({ rotulo, valor, detalhe, tendencia }: {
         )}
         {detalhe}
       </p>
-    </div>
+    </Raiz>
   )
 }
 
