@@ -28,12 +28,12 @@
 
 - [X] T013 Fornecedores, modelos, sugestões e cotações (etapas, anexos, recebimento)
 - [X] T014 Relatório mensal e séries dos gráficos
-- [ ] T015 Importação com prévia, associação e confirmação (associação e confirmação prontas; leitura do
-  `.xlsx` responde 501 até a spec da leitura real)
+- [X] T015 Importação com prévia, associação e confirmação: leitura do `.xlsx` pelo nome das colunas
+  (`services/planilha.py`); planilha de cotação vira cotação em rascunho. Falta conferir com uma planilha real.
 
 ## Fase 6 — Integração
 
 - [X] T016 Makefile (`up`, `api-local`, `seed`, `test`, `lint`) e documentação técnica
 - [ ] T017 Conferir as telas com `make front` ligado à API (rotas conferidas por curl pelo proxy do Vite; falta o
   navegador)
-- [ ] T018 Rodar com PostgreSQL (`make up`, `make seed`) com o Docker Desktop ligado
+- [X] T018 Rodar com PostgreSQL (`make up`, `make seed`): migração, dados de exemplo e fluxo de cotação conferidos

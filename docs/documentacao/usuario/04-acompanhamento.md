@@ -45,4 +45,9 @@ Para não começar do zero, o administrador pode enviar uma planilha **Declaraç
    produto do catálogo (quando a planilha não tem código) e as linhas com **erro** (que serão ignoradas);
 3. toque em **Confirmar importação**. Nada é gravado antes disso.
 
-> Na fase de demonstração, a pré-visualização mostra linhas de exemplo, qualquer que seja o arquivo enviado.
+A planilha precisa estar em **.xlsx** (no Excel: *Salvar como > Pasta de Trabalho do Excel*). O sistema acha
+sozinho as colunas pelo nome (Código, Produto ou Material, Contagem ou Quantidade, Unidade de medida, Observação e,
+na cotação, Valor) e lê a unidade, o responsável e a data do cabeçalho. Quantidade em branco continua "não
+contado". Uma planilha de cotação vira uma cotação em rascunho, com os preços da planilha.
+
+> Na demonstração (dados de exemplo), a pré-visualização mostra linhas de exemplo, qualquer que seja o arquivo.

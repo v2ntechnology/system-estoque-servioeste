@@ -40,8 +40,14 @@ Dar acesso: a pessoa abre o Estoque pelo Hub uma vez e depois
 - Contagem finalizada, movimentação e aprovação não são apagadas; não há rota para isso.
 - Auditoria (`auditoria`) na mesma transação: abrir e finalizar contagem, movimentação, mínimos, unidade,
   fornecedor, cotação criada, aprovada e recebida, importação confirmada.
-- **Importação**: `POST /importacao/planilha` responde 501 até a spec da leitura do `.xlsx` (o formato real das
-  planilhas da Servioeste ainda não foi conferido). Associação e confirmação de uma prévia já funcionam.
+- **Importação** (`app/services/planilha.py`, openpyxl): só `.xlsx` (até 5 MB, primeira aba). Acha a linha de
+  cabeçalho nas 30 primeiras pelo **nome** das colunas (Código/Cód., Produto/Material/Descrição, Contagem/Quantidade/
+  Qtd, Unidade de medida/UN, Observação/Obs., Valor/Preço) e lê "Unidade:", "Responsável:" e "Data:" acima dele
+  (na mesma célula ou na do lado). Para em 3 linhas sem produto e ignora "Total". Quantidade vazia = não contado;
+  texto ou negativo = linha com erro. Classificação: código conhecido = ok; código novo = novo (vira produto ao
+  confirmar); sem código, acha pelo nome sem acento ou fica "associar". Confirmar uma Declaração cria a contagem
+  finalizada (fora da planilha = não contado); uma planilha de cotação cria a cotação em rascunho com os preços.
+  O formato foi tirado da documentação técnica: conferir com uma planilha real da Servioeste.
 - Anexos de cotação: só o registro (nome, tipo, autor); guardar o arquivo no servidor tem spec própria.
 
 ## Comandos

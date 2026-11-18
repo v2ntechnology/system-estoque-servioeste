@@ -20,3 +20,9 @@ finalização da contagem, como nos simulados. Recalcular a partir do histórico
 ## D5 — Banco sem Docker no dia a dia
 Os testes usam SQLite em memória (como no Hub). `make api-local` usa SQLite em arquivo só para conferir telas quando o
 Docker Desktop está desligado; o oficial é PostgreSQL (`make up`).
+
+## D6 — Leitura das planilhas pelo nome das colunas
+Sem uma planilha real da Servioeste, o leitor segue o formato da documentação técnica e acha cabeçalho e colunas
+pelo nome (com variações comuns), como o leitor do Resíduos. Assim uma coluna fora de ordem ou linhas a mais no topo
+não quebram. Só `.xlsx` (openpyxl não lê `.xls`); a mensagem ensina a salvar no formato novo. Quando chegar a planilha
+real, os testes de `tests/test_planilha.py` ganham um caso com ela (sem dados reais no repositório).
